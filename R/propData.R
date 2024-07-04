@@ -16,7 +16,7 @@
 #'
 propData <- function(data, part_col, val_col, group_col = NULL, var_trans = 1, threshold_trans = 1, base = 2, adj = 10, threshold = 2) {
 
-  source('sermetric/R//prop.R')
+  source('sermetric/R/prop.R')
 
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
