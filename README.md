@@ -183,7 +183,7 @@
     ## 10 10 125.5 1989.727 4.555556 0.49444444 0.9650000 0.5345833  0.3725
 ```
 
-###### The second method is to calculate the metrics one by one, and join them manually.
+##### The second method is to calculate the metrics one by one, and join them manually.
 ```r
     source('serometric/R/atyData.R')
     source('serometric/R/aucData.R')
@@ -226,6 +226,7 @@
     ##  9    17 1            -24      1 1 A/HK/1968(H3N2)     9     1           1968
     ## 10    36 1             -5      1 1 A/HK/1968(H3N2)    10     1           1968
 ```
+###### Choose the metrics as you want.
 ```r
     atyResult <- atyData(df,part_col = c("id"),weight_col = c("isolation_year"), val_col = c("titers"), var_trans = 1)
     aucResult <- aucData(df,part_col = c("id"),weight_col = c("isolation_year"), val_col = c("titers"), var_trans = 1)
@@ -328,7 +329,7 @@
     ## 10              2        2010 0.2060224 5.711489 -1.5264905 0.9824561 0.3859649 0.2982456
 ```
 
-###### The second method is to calculate the metrics one by one, and join them manually.
+##### The second method is to calculate the metrics one by one, and join them manually.
 ```r
     library(readxl)
     library(stringr)
@@ -374,6 +375,7 @@
     ##  9                1          2007            1957 H3 PCR+ <NA>                                 63 JO/33/94       80           1994
     ## 10                1          2007            1957 H3 PCR+ <NA>                                 63 SD/9/93        10           1993
 ```
+###### Choose the metrics as you want.
 ```r
     atyResult <- atyData(transformed_df,part_col = c("Subject Number"),weight_col = c("isolation_year"), val_col = c("titer"), group_col = c("Sample Year"),var_trans = 0, aty_col = "aty")
     aucResult <- aucData(transformed_df,part_col = c("Subject Number"),weight_col = c("isolation_year"), val_col = c("titer"), group_col = c("Sample Year"),var_trans = 0,mode="mean", auc_col = "auc")
