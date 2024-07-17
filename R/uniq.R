@@ -4,8 +4,11 @@
 #' @param data data frame
 #' @param columns columns to select
 #' @return uniq
-#' @export
+#'
+
 uniq = function(data, columns = NULL){
+  
+  library(dplyr)
   
   if (is.null(columns)) {
     columns <- names(data)

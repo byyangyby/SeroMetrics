@@ -1,0 +1,29 @@
+\nonstopmode{}
+\documentclass[a4paper]{book}
+\usepackage[times,inconsolata,hyper]{Rd}
+\usepackage{makeidx}
+\usepackage[utf8]{inputenc} % @SET ENCODING@
+% \usepackage{graphicx} % @USE GRAPHICX@
+\makeindex{}
+\begin{document}
+\chapter*{}
+\begin{center}
+{\textbf{\huge Package `SeroMetrics'}}
+\par\bigskip{\large \today}
+\end{center}
+\inputencoding{utf8}
+\ifthenelse{\boolean{Rd@use@hyper}}{\hypersetup{pdftitle = {SeroMetrics: Summary metrics for antibody landscapes}}}{}
+\begin{description}
+\raggedright{}
+\item[Type]\AsIs{Package}
+\item[Title]\AsIs{Summary metrics for antibody landscapes}
+\item[Version]\AsIs{0.1.0}
+\item[Author]\AsIs{Bingyi Yang, Shixian Xu, Justin Lessler}
+\item[Maintainer]\AsIs{Bingyi Yang }\email{byyang@connect.hku.hk}\AsIs{}
+\item[Description]\AsIs{Quantitatively summarize antibody landscapes using a set of metrics that capture the magnitude, extent, skewness and tailedness of antibody response profiles. The package provides functions to calculate these metrics and visualize the results. The package also includes publicly available dataset of antibody responses for demonstration.}
+\item[License]\AsIs{GPL-3.0 license}
+\item[Encoding]\AsIs{UTF-8}
+\item[LazyData]\AsIs{true}
+\item[RoxygenNote]\AsIs{7.3.1}
+\end{description}
+\Rdcontents{\R{} topics documented:}

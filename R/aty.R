@@ -11,7 +11,8 @@
 
 #' @return ATY
 #'
-#' @export
+
+
 aty = function(titer, distance.weight,
                input.log.trans, base = 2, adj = 10, adjust = NULL){
 

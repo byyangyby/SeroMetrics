@@ -10,7 +10,8 @@
 #' @param adj dividing factor before taking log transformation, default is 10
 
 #' @return PROP
-#' @export
+#'
+
 prop = function(titer, threshold = 2, threshold.log.trans = TRUE, input.log.trans = TRUE, base = 2, adj = 10){
 
   if(input.log.trans){

@@ -14,8 +14,7 @@ skewnessData(
   base = 2,
   adj = 10,
   mode = NULL,
-  adjust = NULL,
-  skew_col = "Skewness"
+  adjust = NULL
 )
 }
 \arguments{
@@ -39,8 +38,6 @@ TRUE = log transformed, FALSE = not log transformed}
 \item{mode}{how to calculate values if weight_col is repeated, default is NULL}
 
 \item{adjust}{how to adjust titers, default is the minimum of titers}
-
-\item{skew_col}{the column name of the skewness column, default is "Skewness"}
 }
 \value{
 a data frame containing the individual skewness values

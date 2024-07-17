@@ -12,8 +12,7 @@ max_titerData(
   var_trans = 1,
   output_trans = 1,
   base = 2,
-  adj = 10,
-  max_titer_col = "Max_titer"
+  adj = 10
 )
 }
 \arguments{
@@ -28,14 +27,12 @@ max_titerData(
 \item{var_trans}{whether the input titer value is log transformed, default is TRUE
 TRUE = log transformed, FALSE = not log transformed}
 
-\item{output_trans}{whether the output titer value is log transformed, default is TRUE
-TRUE = log transformed, FALSE = not log transformed}
-
 \item{base}{log base used to calculate the log transformed value, default is 2}
 
 \item{adj}{dividing factor before taking log transformation, default is 10}
 
-\item{max_titer_col}{the column name of the max titer column, default is "Max_titer"}
+\item{output.log.trans}{whether the output titer value is log transformed, default is TRUE
+TRUE = log transformed, FALSE = not log transformed}
 }
 \value{
 a data frame containing the individual max_titer values
