@@ -125,7 +125,7 @@
 
 ### Step 1: clear up global Environment
 
-### Step 2:
+### Step 2: Run the codes below
 
 ``` r
 # Download necessary packages if you have not installed them in your PC
