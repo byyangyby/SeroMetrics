@@ -103,7 +103,7 @@ df <- df %>%
 head(df,10)
 ```
 
-## II. Environment Build-up
+## II. Package Build-up
 
 ### Step 1: Clear up the global environment.
 
