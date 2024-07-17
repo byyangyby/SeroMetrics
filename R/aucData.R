@@ -11,10 +11,11 @@
 #' @param adj dividing factor before taking log transformation, default is 10
 #' @param mode how to calculate values if weight_col is repeated, default is NULL
 #' @param adjust how to adjust titers, default is the minimum of titers
+#' @param auc_col the column name of the AUC column, default is "AUC"
 #'
 #' @return a data frame containing the individual unnormalized AUC values
 #'
-aucData <- function(data, part_col, weight_col, val_col, group_col = NULL, var_trans = 1, base = 2, adj = 10, mode = NULL, adjust = NULL) {
+aucData <- function(data, part_col, weight_col, val_col, group_col = NULL, var_trans = 1, base = 2, adj = 10, mode = NULL, adjust = NULL, auc_col = "AUC") {
 
   source('R/auc.R')
 
@@ -31,6 +32,8 @@ aucData <- function(data, part_col, weight_col, val_col, group_col = NULL, var_t
   }
 
   stat <- cbind(stat, AUC)
+
+  colnames(stat)[colnames(stat) == "AUC"] <- auc_col
 
   return(stat)
 }

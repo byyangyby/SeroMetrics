@@ -14,10 +14,11 @@
 #' @param threshold the titers above which are counted, default is 2
 #' @param mode how to calculate values if weight_col is repeated, default is NULL
 #' @param adjust how to adjust titers, default is the minimum of titers
+#' @param width_col the column name of the Width column, default is "Width"
 #'
 #' @return a data frame containing the individual weighted width
 #'
-widthData <- function(data, part_col, weight_col, val_col, group_col = NULL, var_trans = 1, threshold_trans = 1, base = 2, adj = 10, threshold = 2, mode = NULL, adjust = NULL) {
+widthData <- function(data, part_col, weight_col, val_col, group_col = NULL, var_trans = 1, threshold_trans = 1, base = 2, adj = 10, threshold = 2, mode = NULL, adjust = NULL, width_col = "Width") {
 
   source('R/width.R')
 
@@ -36,6 +37,8 @@ widthData <- function(data, part_col, weight_col, val_col, group_col = NULL, var
   }
 
   stat <- cbind(stat, Width)
+
+  colnames(stat)[colnames(stat) == "Width"] <- width_col
 
   return(stat)
 }

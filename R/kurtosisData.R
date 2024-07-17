@@ -11,10 +11,11 @@
 #' @param adj dividing factor before taking log transformation, default is 10
 #' @param mode how to calculate values if weight_col is repeated, default is NULL
 #' @param adjust how to adjust titers, default is the minimum of titers
+#' @param kurt_col the column name of the Kurtosis column, default is "Kurtosis"
 #'
 #' @return a data frame containing the individual kurtosis values
 #'
-kurtosisData <- function(data, part_col,weight_col,val_col,group_col = NULL, var_trans = 1, base = 2, adj = 10, mode = NULL, adjust = NULL) {
+kurtosisData <- function(data, part_col,weight_col,val_col,group_col = NULL, var_trans = 1, base = 2, adj = 10, mode = NULL, adjust = NULL, kurt_col = "Kurtosis") {
 
   source('R/kurtosis.R')
 
@@ -32,6 +33,8 @@ kurtosisData <- function(data, part_col,weight_col,val_col,group_col = NULL, var
     })
   }
   stat <- cbind(stat, Kurtosis)
+
+  colnames(stat)[colnames(stat) == "Kurtosis"] <- kurt_col
 
   return(stat)
 }

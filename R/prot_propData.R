@@ -13,10 +13,11 @@
 #' @param base log base used to calculate the log transformed value, default is 2
 #' @param adj dividing factor before taking log transformation, default is 10
 #' @param weight a parameter passed to the `prot_prop` function
+#' @param prot_prop_col the column name of the protected proportion column, default is "Prot_prop"
 #'
 #' @return a data frame containing the individual weighted prot_prop
 #'
-prot_propData <- function(data, part_col, val_col, group_col = NULL, min.y = NULL, weight = c(0.00,0.05,0.10,0.30,0.60,0.75,0.85,0.90,0.95,0.99), var_trans = 1, weight_trans = 1, base = 2, adj = 10) {
+prot_propData <- function(data, part_col, val_col, group_col = NULL, min.y = NULL, weight = c(0.00,0.05,0.10,0.30,0.60,0.75,0.85,0.90,0.95,0.99), var_trans = 1, weight_trans = 1, base = 2, adj = 10, prot_prop_col = "Prot_prop") {
 
   source('R/prot_prop.R')
 
@@ -35,6 +36,8 @@ prot_propData <- function(data, part_col, val_col, group_col = NULL, min.y = NUL
   }
 
   stat <- cbind(stat, Prot_prop)
+
+  colnames(stat)[colnames(stat) == "Prot_prop"] <- prot_prop_col
 
   return(stat)
 }

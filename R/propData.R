@@ -11,10 +11,11 @@
 #' @param base log base used to calculate the log transformed value, default is 2
 #' @param adj dividing factor before taking log transformation, default is 10
 #' @param threshold the titers above which are counted, default is 2
+#' @param prop_col the column name of the proportion column, default is "Proportion"
 #'
 #' @return a data frame containing the individual weighted prop
 #'
-propData <- function(data, part_col, val_col, group_col = NULL, var_trans = 1, threshold_trans = 1, base = 2, adj = 10, threshold = 2) {
+propData <- function(data, part_col, val_col, group_col = NULL, var_trans = 1, threshold_trans = 1, base = 2, adj = 10, threshold = 2, prop_col = "Proportion") {
 
   source('R/prop.R')
 
@@ -33,6 +34,8 @@ propData <- function(data, part_col, val_col, group_col = NULL, var_trans = 1, t
   }
 
   stat <- cbind(stat, Proportion)
+
+  colnames(stat)[colnames(stat) == "Proportion"] <- prop_col
 
   return(stat)
 }
