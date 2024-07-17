@@ -14,10 +14,8 @@
 #' @param skew_col the column name of the skewness column, default is "Skewness"
 #'
 #' @return a data frame containing the individual skewness values
-#'
+#' @export
 skewnessData <- function(data, part_col,weight_col,val_col,group_col = NULL, var_trans = 1, base = 2, adj = 10 , mode = NULL, adjust = NULL, skew_col = "Skewness") {
-
-  source('serometric/R/skewness.R')
 
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
@@ -56,6 +54,7 @@ skewnessData <- function(data, part_col,weight_col,val_col,group_col = NULL, var
 #' @param adjust how to adjust titers, default is the minimum of titers
 #'
 #' @return the skewness value for the given participant
+#' @export
 skewCal <- function(i, j, data, part_col, weight_col, val_col, group_col, var_trans, base, adj, mode, adjust) {
 
   if(is.null(j)){

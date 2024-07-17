@@ -11,8 +11,7 @@
 #'
 #' @return kurtosis
 #'
-
-
+#' @export
 kurt = function(titer, distance.weight, input.log.trans, base = 2, adj = 10, adjust = NULL){
 
   if(input.log.trans){

@@ -16,10 +16,8 @@
 #' @param prot_prop_col the column name of the protected proportion column, default is "Prot_prop"
 #'
 #' @return a data frame containing the individual weighted prot_prop
-#'
+#' @export
 prot_propData <- function(data, part_col, val_col, group_col = NULL, min.y = NULL, weight = c(0.00,0.05,0.10,0.30,0.60,0.75,0.85,0.90,0.95,0.99), var_trans = 1, weight_trans = 1, base = 2, adj = 10, prot_prop_col = "Prot_prop") {
-
-  source('serometric/R/prot_prop.R')
 
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
@@ -60,6 +58,7 @@ prot_propData <- function(data, part_col, val_col, group_col = NULL, min.y = NUL
 #' @param adj dividing factor before taking log transformation, default is 10
 #'
 #' @return the weighted prot_prop for the given participant
+#' @export
 prot_propCal <- function(i, j,data, part_col, val_col, group_col, min.y, weight, var_trans, weight_trans, base, adj) {
 
   if(is.null(j)){

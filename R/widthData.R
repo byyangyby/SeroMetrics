@@ -17,10 +17,8 @@
 #' @param width_col the column name of the Width column, default is "Width"
 #'
 #' @return a data frame containing the individual weighted width
-#'
+#' @export
 widthData <- function(data, part_col, weight_col, val_col, group_col = NULL, var_trans = 1, threshold_trans = 1, base = 2, adj = 10, threshold = 2, mode = NULL, adjust = NULL, width_col = "Width") {
-
-  source('serometric/R/width.R')
 
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
@@ -63,6 +61,7 @@ widthData <- function(data, part_col, weight_col, val_col, group_col = NULL, var
 #' @param adjust how to adjust titers, default is the minimum of titers
 #'
 #' @return the weighted width for the given participant
+#' @export
 widthCal <- function(i, j, data, part_col, weight_col, val_col, group_col, var_trans, threshold_trans, base, adj, threshold, mode, adjust) {
 
   if(is.null(j)){

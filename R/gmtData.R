@@ -14,9 +14,8 @@
 #'
 #' @return a data frame containing the individual GMT values
 #'
+#' @export
 gmtData <- function(data, part_col, val_col, group_col = NULL, var_trans = 1, output_trans = 1, base = 2, adj = 10, gmt_col = "GMT") {
-
-  source('serometric/R/gmt.R')
 
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
@@ -55,6 +54,7 @@ gmtData <- function(data, part_col, val_col, group_col = NULL, var_trans = 1, ou
 #' @param adj a parameter passed to the `gmt` function
 #'
 #' @return the GMT value for the given participant
+#' @export
 gmtCal <- function(i, j, data, part_col, val_col, group_col, var_trans, output_trans, base, adj) {
 
   if(is.null(j)){

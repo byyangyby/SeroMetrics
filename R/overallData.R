@@ -23,24 +23,13 @@
 #' @param col_names the column names of the output metrics, default is required_metrics
 #'
 #' @return a data frame containing all metrics
-#'
+#' @export
 overallData <- function(data, part_col, weight_col, val_col, group_col = NULL,
                         min.y = NULL, weight = c(0.00,0.05,0.10,0.30,0.60,0.75,0.85,0.90,0.95,0.99),
                         var_trans = 1, max_titer_output_trans = 1, gmt_output_trans = 1, weight_trans = 1,
                         base = 2, adj = 10, mode = NULL, adjust = NULL,
                         required_metrics = c("ATY","AUC","gini_coefficient","GMT","Kurtosis","Max_titer","Prop2","Prot_prop","Skewness","Width2"),
                         col_names = NULL) {
-
-  source('serometric/R/atyData.R')
-  source('serometric/R/aucData.R')
-  source('serometric/R/giniData.R')
-  source('serometric/R/gmtData.R')
-  source('serometric/R/kurtosisData.R')
-  source('serometric/R/max_titerData.R')
-  source('serometric/R/propData.R')
-  source('serometric/R/prot_propData.R')
-  source('serometric/R/skewnessData.R')
-  source('serometric/R/widthData.R')
 
 
   if(is.null(col_names)){

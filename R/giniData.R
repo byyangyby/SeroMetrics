@@ -13,10 +13,8 @@
 #' @param gini_col the column name of the gini coefficient column, default is "gini_coefficient"
 #'
 #' @return a data frame containing the individual gini values
-#'
+#' @export
 giniData <- function(data, part_col,val_col,group_col = NULL, var_trans = 1, base = 2, adj = 10, adjust = NULL, gini_col = "gini_coefficient") {
-
-  source('serometric/R/gini.R')
 
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
@@ -54,6 +52,7 @@ giniData <- function(data, part_col,val_col,group_col = NULL, var_trans = 1, bas
 #' @param adjust how to adjust titers, default is the minimum of titers - 1
 #'
 #' @return the gini value for the given participant
+#' @export
 giniCal <- function(i, j, data, part_col, val_col, group_col, var_trans, base, adj, adjust = NULL) {
 
   if(is.null(j)){

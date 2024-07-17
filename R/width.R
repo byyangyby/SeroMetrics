@@ -12,8 +12,7 @@
 #' #' @param adjust how to adjust titers, default is the minimum of titers
 #'
 #' @return width
-#'
-
+#' @export
 width = function(titer, distance.weight, threshold = 2, threshold_trans = TRUE, input.log.trans = TRUE, base = 2, adj = 10, adjust = NULL){
 
   if(input.log.trans){

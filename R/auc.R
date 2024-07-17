@@ -11,8 +11,7 @@
 #'
 #' @return AUC
 #'
-
-
+#' @export
 auc = function(titer, distance.weight,
                input.log.trans, base = 2, adj = 10, adjust = NULL){
 

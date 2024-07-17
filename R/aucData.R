@@ -15,9 +15,8 @@
 #'
 #' @return a data frame containing the individual unnormalized AUC values
 #'
+#' @export
 aucData <- function(data, part_col, weight_col, val_col, group_col = NULL, var_trans = 1, base = 2, adj = 10, mode = NULL, adjust = NULL, auc_col = "AUC") {
-
-  source('serometric/R/auc.R')
 
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
@@ -55,6 +54,7 @@ aucData <- function(data, part_col, weight_col, val_col, group_col = NULL, var_t
 #' @param adjust how to adjust titers, default is the minimum of titers
 #'
 #' @return the AUC value for the given participant
+#' @export
 aucCal <- function(i, j, data, part_col, weight_col, val_col, group_col, var_trans, base, adj, mode, adjust = NULL) {
 
   if(is.null(j)){
