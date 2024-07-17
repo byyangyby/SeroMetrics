@@ -121,7 +121,7 @@
     ## 10     1       1952        2020           1969         5
 ```
 ---
-## II. Environment Build-up
+## II. Package Build-Up
 
 ### Step 1: Clear up the global environment.
 
