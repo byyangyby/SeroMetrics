@@ -125,24 +125,32 @@
 
 ### Step 1: Clear up the global environment.
 
-### Step 2: Run the codes below.
+### Step 2: Download the R folder and store it in a folder called "SeroMetrics"
+
+### Step 3: Run the codes below.
 
 ``` r
 # Download necessary packages if you have not installed them in your PC
 # install.packages("roxygen2")
 # install.packages("devtools")
+# install.packages("usethis")
 
 library(roxygen2)
 library(devtools)
+library(usethis)
 
-roxygenise("C:/Users/xShirleyx/Desktop/SRA/20240703/serometric")
-build("C:/Users/xShirleyx/Desktop/SRA/20240703/serometric")
-install("C:/Users/xShirleyx/Desktop/SRA/20240703/serometric")
+# input your own path to the SeroMetrics folder
+create_package("path/to/SeroMetrics")
+roxygenise("path/to/SeroMetrics")
+build("path/to/SeroMetrics")
+install("path/to/SeroMetrics")
 
 library(SeroMetrics)
 ```
 ---
 ## III. Examples of real datasets
+
+#### To run the examples, you may download the data folder into the SeroMetrics folder on your PC.
 
 ### 1. Lessler
 
@@ -157,7 +165,7 @@ library(SeroMetrics)
     library(dplyr)
 
     #load data
-    df <- read_excel("serometric/data/Lessler.xlsx")
+    df <- read_excel("SeroMetrics/data/Lessler.xlsx")
     #data pre-processing
     df$isolation_year <- as.numeric(str_extract(df$neut.against, "\\d{4}"))
     df$titers <- floor(df$titers)
@@ -212,7 +220,7 @@ library(SeroMetrics)
     library(dplyr)
 
     #load data
-    df <- read_excel("serometric/data/Lessler.xlsx")
+    df <- read_excel("SeroMetrics/data/Lessler.xlsx")
     #data pre-processing
     df$isolation_year <- as.numeric(str_extract(df$neut.against, "\\d{4}"))
     df$titers <- floor(df$titers)
@@ -292,10 +300,10 @@ library(SeroMetrics)
     library(tidyverse) #this is for data transformation
 
     #This transformation R-script specifically works for the Fonville dataset. If one's dataset has a structure different than the standard one, one may need to write the transformation codes by oneself, and use the package after transforming the data.
-    source('serometric/data/transform.R')
+    source('SeroMetrics/data/transform.R')
 
     #load valid data
-    df <- read_excel("serometric/data/Fonville.xlsx", n_max = 324)
+    df <- read_excel("SeroMetrics/data/Fonville.xlsx", n_max = 324)
     #data transformation
     transformed_df <- transform(df)
 
@@ -348,10 +356,10 @@ library(SeroMetrics)
     library(tidyverse) #this is for data transformation
 
     #This transformation R-script specifically works for the Fonville dataset. If one's dataset has a structure different than the standard one, one may need to write the transformation codes by oneself, and use the package after transforming the data.
-    source('serometric/data/transform.R')
+    source('SeroMetrics/data/transform.R')
 
     #load valid data
-    df <- read_excel("serometric/data/Fonville.xlsx", n_max = 324)
+    df <- read_excel("SeroMetrics/data/Fonville.xlsx", n_max = 324)
     #data transformation
     transformed_df <- transform(df)
 
