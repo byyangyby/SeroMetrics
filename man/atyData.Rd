@@ -14,7 +14,8 @@ atyData(
   base = 2,
   adj = 10,
   mode = NULL,
-  adjust = NULL
+  adjust = NULL,
+  aty_col = "ATY"
 )
 }
 \arguments{
@@ -38,6 +39,8 @@ TRUE = log transformed, FALSE = not log transformed}
 \item{mode}{how to calculate values if weight_col is repeated, default is NULL}
 
 \item{adjust}{how to adjust titers, default is the minimum of titers}
+
+\item{aty_col}{the column name of the ATY column, default is "ATY"}
 }
 \value{
 a data frame containing the individual ATY values

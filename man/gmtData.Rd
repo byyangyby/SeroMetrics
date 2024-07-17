@@ -12,7 +12,8 @@ gmtData(
   var_trans = 1,
   output_trans = 1,
   base = 2,
-  adj = 10
+  adj = 10,
+  gmt_col = "GMT"
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ TRUE = log transformed, FALSE = not log transformed}
 \item{base}{log base used to calculate the log transformed value, default is 2}
 
 \item{adj}{dividing factor before taking log transformation, default is 10}
+
+\item{gmt_col}{the column name of the GMT column, default is "GMT"}
 }
 \value{
 a data frame containing the individual GMT values

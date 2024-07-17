@@ -12,7 +12,8 @@ giniData(
   var_trans = 1,
   base = 2,
   adj = 10,
-  adjust = NULL
+  adjust = NULL,
+  gini_col = "gini_coefficient"
 )
 }
 \arguments{
@@ -32,6 +33,8 @@ TRUE = log transformed, FALSE = not log transformed}
 \item{adj}{dividing factor before taking log transformation, default is 10}
 
 \item{adjust}{how to adjust titers, default is the minimum of titers - 1}
+
+\item{gini_col}{the column name of the gini coefficient column, default is "gini_coefficient"}
 
 \item{weight_col}{a vector of the distance used to sorting titers. Eg. year of isolation or genetic distance}
 }

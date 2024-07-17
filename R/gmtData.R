@@ -10,12 +10,13 @@
 #'        TRUE = log transformed, FALSE = not log transformed
 #' @param base log base used to calculate the log transformed value, default is 2
 #' @param adj dividing factor before taking log transformation, default is 10
+#' @param gmt_col the column name of the GMT column, default is "GMT"
 #'
 #' @return a data frame containing the individual GMT values
 #'
-gmtData <- function(data, part_col, val_col, group_col = NULL, var_trans = 1, output_trans = 1, base = 2, adj = 10) {
+gmtData <- function(data, part_col, val_col, group_col = NULL, var_trans = 1, output_trans = 1, base = 2, adj = 10, gmt_col = "GMT") {
 
-  source('sermetric/R/gmt.R')
+  source('serometric/R/gmt.R')
 
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
@@ -32,6 +33,8 @@ gmtData <- function(data, part_col, val_col, group_col = NULL, var_trans = 1, ou
   }
 
   stat <- cbind(stat, GMT)
+
+  colnames(stat)[colnames(stat) == "GMT"] <- gmt_col
 
   return(stat)
 }
