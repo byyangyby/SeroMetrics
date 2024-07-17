@@ -123,7 +123,7 @@
 ---
 ## II. Environment Build-up
 
-### Step 1: Clear up global Environment.
+### Step 1: Clear up the global environment.
 
 ### Step 2: Run the codes below.
 
