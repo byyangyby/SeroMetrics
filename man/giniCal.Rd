@@ -33,9 +33,9 @@ giniCal(
 \item{var_trans}{whether the input titer value is log transformed, default is TRUE
 TRUE = log transformed, FALSE = not log transformed}
 
-\item{base}{a parameter passed to the \code{gini} function}
+\item{base}{a parameter passed to the `gini` function}
 
-\item{adj}{a parameter passed to the \code{gini} function}
+\item{adj}{a parameter passed to the `gini` function}
 
 \item{adjust}{how to adjust titers, default is the minimum of titers - 1}
 
