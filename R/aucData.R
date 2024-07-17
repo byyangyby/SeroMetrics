@@ -11,17 +11,18 @@
 #' @param adj dividing factor before taking log transformation, default is 10
 #' @param mode how to calculate values if weight_col is repeated, default is NULL
 #' @param adjust how to adjust titers, default is the minimum of titers
+#' @param auc_col the column name of the AUC column, default is "AUC"
 #'
 #' @return a data frame containing the individual unnormalized AUC values
 #'
-aucData <- function(data, part_col, weight_col, val_col, group_col = NULL, var_trans = 1, base = 2, adj = 10, mode = NULL, adjust = NULL) {
+aucData <- function(data, part_col, weight_col, val_col, group_col = NULL, var_trans = 1, base = 2, adj = 10, mode = NULL, adjust = NULL, auc_col = "AUC") {
 
-  source('sermetric/R/auc.R')
+  source('serometric/R/auc.R')
 
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
 
-    AUC <- sapply(stat[[part_col]], function(i) aucCal(stat[i, part_col], NULL, data, part_col, weight_col, val_col, group_col, var_trans, base, adj, mode, adjust))
+    AUC <- sapply(seq_len(nrow(stat)), function(i) aucCal(stat[i, part_col], NULL, data, part_col, weight_col, val_col, group_col, var_trans, base, adj, mode, adjust))
   }else{
     stat <- unique(data[, c(part_col, group_col), drop = FALSE])
 
@@ -31,6 +32,8 @@ aucData <- function(data, part_col, weight_col, val_col, group_col = NULL, var_t
   }
 
   stat <- cbind(stat, AUC)
+
+  colnames(stat)[colnames(stat) == "AUC"] <- auc_col
 
   return(stat)
 }

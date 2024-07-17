@@ -13,7 +13,8 @@ propData(
   threshold_trans = 1,
   base = 2,
   adj = 10,
-  threshold = 2
+  threshold = 2,
+  prop_col = "Proportion"
 )
 }
 \arguments{
@@ -36,6 +37,8 @@ TRUE = log transformed, FALSE = not log transformed}
 \item{adj}{dividing factor before taking log transformation, default is 10}
 
 \item{threshold}{the titers above which are counted, default is 2}
+
+\item{prop_col}{the column name of the proportion column, default is "Proportion"}
 }
 \value{
 a data frame containing the individual weighted prop

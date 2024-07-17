@@ -16,7 +16,8 @@ widthData(
   adj = 10,
   threshold = 2,
   mode = NULL,
-  adjust = NULL
+  adjust = NULL,
+  width_col = "Width"
 )
 }
 \arguments{
@@ -45,6 +46,8 @@ TRUE = log transformed, FALSE = not log transformed}
 \item{mode}{how to calculate values if weight_col is repeated, default is NULL}
 
 \item{adjust}{how to adjust titers, default is the minimum of titers}
+
+\item{width_col}{the column name of the Width column, default is "Width"}
 }
 \value{
 a data frame containing the individual weighted width

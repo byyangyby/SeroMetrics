@@ -14,7 +14,8 @@ prot_propData(
   var_trans = 1,
   weight_trans = 1,
   base = 2,
-  adj = 10
+  adj = 10,
+  prot_prop_col = "Prot_prop"
 )
 }
 \arguments{
@@ -28,7 +29,7 @@ prot_propData(
 
 \item{min.y}{the smallest titer value(s), default is the minimum value in the titer vector(calculated later, temporarily being NULL in the formula)}
 
-\item{weight}{a parameter passed to the `prot_prop` function}
+\item{weight}{a parameter passed to the \code{prot_prop} function}
 
 \item{var_trans}{whether the input titer value is log transformed, default is TRUE
 TRUE = log transformed, FALSE = not log transformed}
@@ -39,6 +40,8 @@ TRUE = percentage transformed, FALSE = not percentage transformed}
 \item{base}{log base used to calculate the log transformed value, default is 2}
 
 \item{adj}{dividing factor before taking log transformation, default is 10}
+
+\item{prot_prop_col}{the column name of the protected proportion column, default is "Prot_prop"}
 }
 \value{
 a data frame containing the individual weighted prot_prop

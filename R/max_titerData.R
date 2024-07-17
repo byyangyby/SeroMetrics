@@ -6,16 +6,17 @@
 #' @param group_col a vector identifying the sample group, default is NULL
 #' @param var_trans whether the input titer value is log transformed, default is TRUE
 #'        TRUE = log transformed, FALSE = not log transformed
-#' @param output.log.trans whether the output titer value is log transformed, default is TRUE
+#' @param output_trans whether the output titer value is log transformed, default is TRUE
 #'        TRUE = log transformed, FALSE = not log transformed
 #' @param base log base used to calculate the log transformed value, default is 2
 #' @param adj dividing factor before taking log transformation, default is 10
+#' @param max_titer_col the column name of the max titer column, default is "Max_titer"
 #'
 #' @return a data frame containing the individual max_titer values
 #'
-max_titerData <- function(data, part_col, val_col, group_col = NULL, var_trans = 1, output_trans = 1, base = 2, adj = 10) {
+max_titerData <- function(data, part_col, val_col, group_col = NULL, var_trans = 1, output_trans = 1, base = 2, adj = 10, max_titer_col = "Max_titer") {
 
-  source('sermetric/R/max_titer.R')
+  source('serometric/R/max_titer.R')
 
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
@@ -28,6 +29,8 @@ max_titerData <- function(data, part_col, val_col, group_col = NULL, var_trans =
   }
 
   stat <- cbind(stat, Max_titer)
+
+  colnames(stat)[colnames(stat) == "Max_titer"] <- max_titer_col
 
   return(stat)
 }

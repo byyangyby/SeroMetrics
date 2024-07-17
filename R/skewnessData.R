@@ -11,12 +11,13 @@
 #' @param adj dividing factor before taking log transformation, default is 10
 #' @param mode how to calculate values if weight_col is repeated, default is NULL
 #' @param adjust how to adjust titers, default is the minimum of titers
+#' @param skew_col the column name of the skewness column, default is "Skewness"
 #'
 #' @return a data frame containing the individual skewness values
 #'
-skewnessData <- function(data, part_col,weight_col,val_col,group_col = NULL, var_trans = 1, base = 2, adj = 10 , mode = NULL, adjust = NULL) {
+skewnessData <- function(data, part_col,weight_col,val_col,group_col = NULL, var_trans = 1, base = 2, adj = 10 , mode = NULL, adjust = NULL, skew_col = "Skewness") {
 
-  source('sermetric/R/skewness.R')
+  source('serometric/R/skewness.R')
 
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
@@ -32,6 +33,8 @@ skewnessData <- function(data, part_col,weight_col,val_col,group_col = NULL, var
     })
   }
   stat <- cbind(stat, Skewness)
+
+  colnames(stat)[colnames(stat) == "Skewness"] <- skew_col
 
   return(stat)
 }

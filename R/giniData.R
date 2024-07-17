@@ -10,12 +10,13 @@
 #' @param base log base used to calculate the log transformed value, default is 2
 #' @param adj dividing factor before taking log transformation, default is 10
 #' @param adjust how to adjust titers, default is the minimum of titers - 1
+#' @param gini_col the column name of the gini coefficient column, default is "gini_coefficient"
 #'
 #' @return a data frame containing the individual gini values
 #'
-giniData <- function(data, part_col,val_col,group_col = NULL, var_trans = 1, base = 2, adj = 10, adjust = NULL) {
+giniData <- function(data, part_col,val_col,group_col = NULL, var_trans = 1, base = 2, adj = 10, adjust = NULL, gini_col = "gini_coefficient") {
 
-  source('sermetric/R/gini.R')
+  source('serometric/R/gini.R')
 
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
@@ -31,6 +32,8 @@ giniData <- function(data, part_col,val_col,group_col = NULL, var_trans = 1, bas
     })
   }
   stat <- cbind(stat, gini_coefficient)
+
+  colnames(stat)[colnames(stat) == "gini_coefficient"] <- gini_col
 
   return(stat)
 }

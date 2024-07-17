@@ -11,16 +11,17 @@
 #' @param adj dividing factor before taking log transformation, default is 10
 #' @param mode how to calculate values if weight_col is repeated, default is NULL
 #' @param adjust how to adjust titers, default is the minimum of titers
+#' @param aty_col the column name of the ATY column, default is "ATY"
 #'
 #' @return a data frame containing the individual ATY values
 #'
-atyData <- function(data, part_col, weight_col, val_col, group_col = NULL, var_trans = 1, base = 2, adj = 10, mode = NULL, adjust = NULL) {
+atyData <- function(data, part_col, weight_col, val_col, group_col = NULL, var_trans = 1, base = 2, adj = 10, mode = NULL, adjust = NULL, aty_col = "ATY") {
 
-  source('sermetric/R/aty.R')
+  source('serometric/R/aty.R')
 
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
-    ATY <- sapply(stat[[part_col]], function(i) atyCal(stat[i, part_col], NULL, data, part_col, weight_col, val_col, group_col, var_trans, base, adj, mode, adjust))
+    ATY <- sapply(seq_len(nrow(stat)), function(i) atyCal(stat[i, part_col], NULL, data, part_col, weight_col, val_col, group_col, var_trans, base, adj, mode, adjust))
   }else{
     stat <- unique(data[, c(part_col, group_col), drop = FALSE])
     ATY <- sapply(seq_len(nrow(stat)), function(i) {
@@ -28,6 +29,8 @@ atyData <- function(data, part_col, weight_col, val_col, group_col = NULL, var_t
     })
   }
   stat <- cbind(stat, ATY)
+
+  colnames(stat)[colnames(stat) == "ATY"] <- aty_col
 
   return(stat)
 }
