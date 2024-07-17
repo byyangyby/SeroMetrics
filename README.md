@@ -125,7 +125,7 @@
 
 ### Step 1: Clear up the global environment.
 
-### Step 2: Download the R folder and store it in a folder called "SeroMetrics"
+### Step 2: Download the R folder and store it in a folder called "SeroMetrics".
 
 ### Step 3: Run the codes below.
 
