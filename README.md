@@ -123,9 +123,9 @@
 ---
 ## II. Environment Build-up
 
-### Step 1: clear up global Environment
+### Step 1: Clear up global Environment.
 
-### Step 2: Run the codes below
+### Step 2: Run the codes below.
 
 ``` r
 # Download necessary packages if you have not installed them in your PC
