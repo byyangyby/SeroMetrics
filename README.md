@@ -1,4 +1,4 @@
-# seroMetrics
+# SeroMetrics
 
 ## I. Introduction 
 ### Data Format
@@ -121,7 +121,28 @@
     ## 10     1       1952        2020           1969         5
 ```
 ---
-## II. Examples of real datasets
+## II. Environment Build-up
+
+### Step 1: clear up global Environment
+
+### Step 2:
+
+``` r
+# Download necessary packages if you have not installed them in your PC
+# install.packages("roxygen2")
+# install.packages("devtools")
+
+library(roxygen2)
+library(devtools)
+
+roxygenise("C:/Users/xShirleyx/Desktop/SRA/20240703/serometric")
+build("C:/Users/xShirleyx/Desktop/SRA/20240703/serometric")
+install("C:/Users/xShirleyx/Desktop/SRA/20240703/serometric")
+
+library(SeroMetrics)
+```
+---
+## III. Examples of real datasets
 
 ### 1. Lessler
 
@@ -134,8 +155,6 @@
     library(DescTools)
     library(moments)
     library(dplyr)
-
-    source('serometric/R/overallData.R')
 
     #load data
     df <- read_excel("serometric/data/Lessler.xlsx")
@@ -185,16 +204,6 @@
 
 ##### The second method is to calculate the metrics one by one, and join them manually.
 ```r
-    source('serometric/R/atyData.R')
-    source('serometric/R/aucData.R')
-    source('serometric/R/giniData.R')
-    source('serometric/R/gmtData.R')
-    source('serometric/R/kurtosisData.R')
-    source('serometric/R/max_titerData.R')
-    source('serometric/R/propData.R')
-    source('serometric/R/prot_propData.R')
-    source('serometric/R/skewnessData.R')
-    source('serometric/R/widthData.R')
 
     library(readxl)
     library(stringr)
@@ -337,17 +346,6 @@
     library(moments)
     library(dplyr)
     library(tidyverse) #this is for data transformation
-
-    source('serometric/R/atyData.R')
-    source('serometric/R/aucData.R')
-    source('serometric/R/giniData.R')
-    source('serometric/R/gmtData.R')
-    source('serometric/R/kurtosisData.R')
-    source('serometric/R/max_titerData.R')
-    source('serometric/R/propData.R')
-    source('serometric/R/prot_propData.R')
-    source('serometric/R/skewnessData.R')
-    source('serometric/R/widthData.R')
 
     #This transformation R-script specifically works for the Fonville dataset. If one's dataset has a structure different than the standard one, one may need to write the transformation codes by oneself, and use the package after transforming the data.
     source('serometric/data/transform.R')
