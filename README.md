@@ -45,8 +45,8 @@ publications:
 <tr class="odd">
 <td style="text-align: left;"><em>id</em></td>
 <td style="text-align: left;">mandatory</td>
-<td style="text-align: left;">This should be the unique id of the
-sampled participant.</td>
+<td style="text-align: left;">This should be the unique id of the antibody profile, e.g.,
+each sampled participant or participant-sample-year.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><em>value</em></td>
@@ -162,7 +162,7 @@ Pathogens*](https://journals.plos.org/plospathogens/article?id=10.1371/journal.p
 In this data set, cross-sectional antisera were collected, indicating
 that for each participant, only one titer was available for each tested
 virus. In this situation, the `group_col` argument can be set to *NULL*,
-and and since all virus strains have different isolation years, the
+and since all virus strains have different isolation years, the
 `mode` argument can be set to *NULL*.
 
         #show the basic structure of the dataset
