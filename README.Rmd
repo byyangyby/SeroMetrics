@@ -35,7 +35,7 @@ library(SeroMetrics)
 ## 2. Data structure
 
 | Variable          | Type      | Explanation                                                                                                                                                                                            |
-|:---------|:---------|:---------------------------------------------------|
+|:------------|:------------|:--------------------------------------------|
 | *id*              | mandatory | This should be the unique id of the sampled participant.                                                                                                                                               |
 | *value*           | mandatory | This should be the investigated value, usually being titers.                                                                                                                                           |
 | *distance*        | mandatory | This should be the absolute distance among virus strains, usually being isolation year of the or amino acid (AA) distance between the tested and referenced virus.                                     |
