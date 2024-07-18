@@ -37,9 +37,9 @@ atyCal(
 \item{var_trans}{whether the input titer value is log transformed, default is TRUE
 TRUE = log transformed, FALSE = not log transformed}
 
-\item{base}{a parameter passed to the `aty` function}
+\item{base}{a parameter passed to the \code{aty} function}
 
-\item{adj}{a parameter passed to the `aty` function}
+\item{adj}{a parameter passed to the \code{aty} function}
 
 \item{mode}{how to calculate values if weight_col is repeated, default is NULL}
 

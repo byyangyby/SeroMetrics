@@ -33,9 +33,9 @@ max_titerCal(
 \item{var_trans}{whether the input titer value is log transformed, default is TRUE
 TRUE = log transformed, FALSE = not log transformed}
 
-\item{base}{a parameter passed to the `max_titer` function}
+\item{base}{a parameter passed to the \code{max_titer} function}
 
-\item{adj}{a parameter passed to the `max_titer` function}
+\item{adj}{a parameter passed to the \code{max_titer} function}
 
 \item{output.log.trans}{whether the output titer value is log transformed, default is TRUE
 TRUE = log transformed, FALSE = not log transformed}

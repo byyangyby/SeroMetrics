@@ -14,10 +14,8 @@
 #' @param prop_col the column name of the proportion column, default is "Proportion"
 #'
 #' @return a data frame containing the individual weighted prop
-#'
+#' @export
 propData <- function(data, part_col, val_col, group_col = NULL, var_trans = 1, threshold_trans = 1, base = 2, adj = 10, threshold = 2, prop_col = "Proportion") {
-
-  source('R/prop.R')
 
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
@@ -57,6 +55,7 @@ propData <- function(data, part_col, val_col, group_col = NULL, var_trans = 1, t
 #' @param threshold the titers above which are counted, defalut is 2
 #'
 #' @return the weighted prop for the given participant
+#' @export
 propCal <- function(i, j, data, part_col, val_col, group_col, var_trans, threshold_trans, base, adj, threshold) {
 
   if(is.null(j)){

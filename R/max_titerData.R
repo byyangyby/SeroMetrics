@@ -13,10 +13,8 @@
 #' @param max_titer_col the column name of the max titer column, default is "Max_titer"
 #'
 #' @return a data frame containing the individual max_titer values
-#'
+#' @export
 max_titerData <- function(data, part_col, val_col, group_col = NULL, var_trans = 1, output_trans = 1, base = 2, adj = 10, max_titer_col = "Max_titer") {
-
-  source('R/max_titer.R')
 
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
@@ -51,6 +49,7 @@ max_titerData <- function(data, part_col, val_col, group_col = NULL, var_trans =
 #' @param adj a parameter passed to the `max_titer` function
 #'
 #' @return the max_titer value for the given participant
+#' @export
 max_titerCal <- function(i,j, data, part_col, val_col, group_col = NULL, var_trans, output_trans, base, adj) {
 
   if(is.null(j)){

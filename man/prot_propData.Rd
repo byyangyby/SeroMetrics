@@ -29,7 +29,7 @@ prot_propData(
 
 \item{min.y}{the smallest titer value(s), default is the minimum value in the titer vector(calculated later, temporarily being NULL in the formula)}
 
-\item{weight}{a parameter passed to the `prot_prop` function}
+\item{weight}{a parameter passed to the \code{prot_prop} function}
 
 \item{var_trans}{whether the input titer value is log transformed, default is TRUE
 TRUE = log transformed, FALSE = not log transformed}

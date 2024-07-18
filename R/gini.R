@@ -10,8 +10,7 @@
 #'
 #' @return gini
 #'
-
-
+#' @export
 gini = function(titer, input.log.trans, base = 2, adj = 10, adjust = NULL){
 
   if(input.log.trans){

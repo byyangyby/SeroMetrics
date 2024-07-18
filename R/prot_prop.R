@@ -11,9 +11,7 @@
 #' @param base log base used to calculate the log transformed value, default is 2
 #' @param adj dividing factor before taking log transformation, default is 10
 #' @return prot_prop
-#'
-
-
+#' @export
 prot_prop = function(titer, min_titer = NULL, weight = c(0.00,0.05,0.10,0.30,0.60,0.75,0.85,0.90,0.95,0.99),
                      input.log.trans = TRUE, input.pct.trans = TRUE, base = 2, adj = 10){
 

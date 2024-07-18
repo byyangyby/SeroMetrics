@@ -36,9 +36,9 @@ TRUE = log transformed, FALSE = not log transformed}
 \item{output_trans}{whether the output titer value is log transformed, default is TRUE
 TRUE = log transformed, FALSE = not log transformed}
 
-\item{base}{a parameter passed to the `gmt` function}
+\item{base}{a parameter passed to the \code{gmt} function}
 
-\item{adj}{a parameter passed to the `gmt` function}
+\item{adj}{a parameter passed to the \code{gmt} function}
 }
 \value{
 the GMT value for the given participant

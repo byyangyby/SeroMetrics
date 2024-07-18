@@ -10,9 +10,7 @@
 #' @param adjust how to adjust titers, default is the minimum of titers
 #'
 #' @return skewness
-#'
-
-
+#' @export
 skew = function(titer, distance.weight, input.log.trans, base = 2, adj = 10, adjust = NULL){
 
   if(input.log.trans){

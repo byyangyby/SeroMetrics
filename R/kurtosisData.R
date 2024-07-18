@@ -15,9 +15,8 @@
 #'
 #' @return a data frame containing the individual kurtosis values
 #'
+#' @export
 kurtosisData <- function(data, part_col,weight_col,val_col,group_col = NULL, var_trans = 1, base = 2, adj = 10, mode = NULL, adjust = NULL, kurt_col = "Kurtosis") {
-
-  source('R/kurtosis.R')
 
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
@@ -56,6 +55,7 @@ kurtosisData <- function(data, part_col,weight_col,val_col,group_col = NULL, var
 #' @param adjust how to adjust titers, default is the minimum of titers
 #'
 #' @return the kurtosis value for the given participant
+#' @export
 kurtCal <- function(i, j, data, part_col, weight_col, val_col, group_col, var_trans, base, adj, mode, adjust) {
 
   if(is.null(j)){

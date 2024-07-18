@@ -10,7 +10,7 @@
 #'        TRUE = log transformed, FALSE = not log transformed
 #' @return max titer
 #'
-
+#' @export
 max_titer = function(titer, input.log.trans = TRUE, base = 2, adj = 10, output.log.trans = TRUE){
 
   if(input.log.trans){
