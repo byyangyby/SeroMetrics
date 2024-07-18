@@ -22,7 +22,7 @@ aucData <- function(data, part_col, weight_col, val_col, group_col = NULL, var_t
   if(is.null(group_col)){
     stat <- unique(data[, part_col, drop = FALSE])
 
-    AUC <- sapply(stat[[part_col]], function(i) aucCal(stat[i, part_col], NULL, data, part_col, weight_col, val_col, group_col, var_trans, base, adj, mode, adjust))
+    AUC <- sapply(seq_len(nrow(stat)), function(i) aucCal(stat[i, part_col], NULL, data, part_col, weight_col, val_col, group_col, var_trans, base, adj, mode, adjust))
   }else{
     stat <- unique(data[, c(part_col, group_col), drop = FALSE])
 
