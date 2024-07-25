@@ -2,7 +2,7 @@ Package: SeroMetrics
 Type: Package
 Title: Summary metrics for antibody landscapes
 Version: 0.1.0
-Author: Bingyi Yang, Shixian Xu, Justin Lessler
+Author: Bingyi Yang, Shixian Xu
 Maintainer: Bingyi Yang <byyang@connect.hku.hk>
 Description: Quantitatively summarize antibody landscapes using a set of metrics that capture the magnitude, extent, skewness and tailedness of antibody response profiles. The package provides functions to calculate these metrics and visualize the results. The package also includes publicly available dataset of antibody responses for demonstration.
 License: GPL-3.0 license
