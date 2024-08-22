@@ -1,0 +1,1154 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# SeroMetrics
+
+`SeroMetrics` is an R package designed to quantify an individual's *antigenic landscape*, which comprises hemagglutination inhibition (HAI) titers against a panel of influenza viruses isolated at various times or in different antigenic spaces. Visualization functions are currently being planned and developed, and will be released soon.
+
+Summary metrics and application examples are adapted from the following publications:
+
+-   Yang B, Lessler J, Zhu H, Jiang CQ, Read JM, Hay JA, Kwok KO, Shen R, Guan Y, Riley S, Cummings DA. [Life course exposures continually shape antibody profiles and risk of seroconversion to influenza](https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1008635). PLoS pathogens. 2020 Jul 23;16(7):e1008635.
+
+-   Yang B, Leung NHL, Fox A, Sullivan SG, Ho F, Barr IG, Cheng SMS, Wong SS, Levine MZ, Iuliano AD, Peiris M, Thompson MG, Cowling BJ. Evaluating Antibody Breadth Following Various Enhanced Influenza Vaccines in Older Adults. *In preparation*.
+
+------------------------------------------------------------------------
+
+## 1. Installation
+
+```{r install, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+
+# install.packages("devtools")
+# devtools::install("SeroMetrics")
+
+# library(devtools)
+# 
+# devtools::document()
+# devtools::build_manual()
+# devtools::install(args = "--no-staged-install")
+# library(SeroMetrics)
+
+
+library(roxygen2)
+library(devtools)
+library(usethis)
+
+create_package("C:/Users/xShirleyx/Desktop/SRA/20240821/SeroMetrics")
+roxygenise("C:/Users/xShirleyx/Desktop/SRA/20240821/SeroMetrics")
+build("C:/Users/xShirleyx/Desktop/SRA/20240821/SeroMetrics")
+install("C:/Users/xShirleyx/Desktop/SRA/20240821/SeroMetrics")
+
+```
+
+------------------------------------------------------------------------
+
+## 2. Data structure
+
+| Variable          | Type      | Explanation                                                                                                                                                                                            |
+|:------------|:------------|:--------------------------------------------|
+| *id*              | mandatory | This should be the unique id of the sampled participant.                                                                                                                                               |
+| *value*           | mandatory | This should be the investigated value, usually being titers.                                                                                                                                           |
+| *distance*        | mandatory | This should be the absolute distance among virus strains, usually being isolation year of the or amino acid (AA) distance between the tested and referenced virus.                                     |
+| *strain*          | optional  | This should be the virus strains. When distance is not provided, one may need to derive isolation year from the information in virus strain.                                                           |
+| *group*           | optional  | This should be the group of some sample of a participant. Sometimes, one participant may take tests on the same strains multiple times, and the samples collected from each time forms a sample group. |
+| *other variables* | optional  | There might be age, sex, and other information regarding the participant. At most times, these variables will not affect the final result of the metrics.                                              |
+
+### 2.1. Simulated data
+
+```{r data_simulation, include=FALSE}
+ library(dplyr)
+
+    set.seed(12986)
+
+    id <- rep(1:30, each = 2)
+
+    unique_birth_year <- sample(1937:2014, size = 30, replace = TRUE)
+
+    birth_year <- rep(unique_birth_year, each = 2)
+
+    sample_year <- rep(c(2020, 2024), times = 30)
+
+    df <- data.frame(id = id, birth_year = birth_year, sample_year = sample_year)
+
+    unique_isolation_years <- sample(1950:2020, size = 20, replace = TRUE)
+
+    df <- df %>%
+      slice(rep(1:n(), each = 20)) %>%
+      mutate(isolation_year = rep(unique_isolation_years, times = n() / 20))
+
+    generate_log_titer <- function(birth_year, isolation_year) {
+      if(isolation_year<1960){
+        if(birth_year > 2005){
+          return(sample(-1:2,1))
+        }else if(birth_year >=1995 & birth_year < 2005){
+          return(sample(2:5,1))
+        }else if(birth_year >=1955 & birth_year < 1995){
+          return(sample(5:6,1))
+        }else{
+          return(sample(4:6,1))
+        }
+      }else if(isolation_year >= 1960 & isolation_year<=1970){
+        if(birth_year > 2005){
+          return(sample(-1:2,1))
+        }else if(birth_year >=1995 & birth_year < 2005){
+          return(sample(3:5,1))
+        }else if(birth_year >=1955 & birth_year < 1995){
+          return(sample(6:7,1))
+        }else{
+          return(sample(5:6,1))
+        }
+      }else if(isolation_year >= 1970 & isolation_year<=1995){
+        if(birth_year > 2005){
+          return(sample(-1:2,1))
+        }else if(birth_year >=1995 & birth_year < 2005){
+          return(sample(2:6,1))
+        }else if(birth_year >=1955 & birth_year < 1995){
+          return(sample(4:5,1))
+        }else{
+          return(sample(3:4,1))
+        }
+      }else if(isolation_year >= 1995 & isolation_year<=2005){
+        if(birth_year > 2005){
+          return(sample(0:4,1))
+        }else if(birth_year >=1995 & birth_year < 2005){
+          return(sample(6:7,1))
+        }else if(birth_year >=1955 & birth_year < 1995){
+          return(sample(4:7,1))
+        }else{
+          return(sample(3:5,1))
+        }
+      }else if(isolation_year >= 2005){
+        if(birth_year > 2005){
+          if(isolation_year > birth_year){
+            return(sample(5:8,1))
+          }else{
+            return(sample(2:6,1))
+          }
+        }else if(birth_year >=1995 & birth_year < 2005){
+          return(sample(7:8,1))
+        }else if(birth_year >=1955 & birth_year < 1995){
+          return(sample(2:5,1))
+        }else{
+          return(sample(0:4,1))
+        }
+      }
+    }
+
+    df <- df %>%
+      rowwise() %>%
+      mutate(log_titer = generate_log_titer(birth_year, isolation_year)) %>%
+      ungroup()
+    
+profile = df %>% filter(id == 25)
+
+```
+
+The following shows a simulated antibody landscape from the following participant:
+
+-   `id` in the study is 25
+
+-   `birth_year` born in the year of 1952
+
+-   `sample_year` antiserum was collected in the year of 2020
+
+-   `isolation_year` the isolation year of the tested virus; there are 40 rows in the sample profile, meaning that we tested the antiserum against 40 tested viruses
+
+-   `log_titer` log-transformed antibody titer
+
+```{r example_data}
+
+head(profile, 5)
+
+```
+
+### 2.2. Transform distance variable
+
+The following shows examples to compute the `distance` variable using different references, which will be further used for metric calculation. In this example, the antibody landscape is arranged by isolation time of the tested virus.
+
+If the antibody landscape is arranged in the antigenic space, the `distance` variable should be computed as the difference in AA substitutions between tested virus and the reference virus. distance_null will be unable to calculate in such situation.
+
+```{r tranform_distance_var, include=TRUE}
+
+profile = profile %>%
+  mutate(
+    distance_1 = isolation_year - birth_year, # align to the year of birth
+    distance_2 = isolation_year - sample_year, # align to the antiserum collection year
+    distance_null = isolation_year # without reference; raw value for isolation year
+  )
+
+profile %>%
+  select(-id) %>%
+  head()
+```
+
+------------------------------------------------------------------------
+
+## 3. Example of applications
+
+### 3.1. Lessler *et al*. 2012 *PLoS Pathogens*
+
+This is an example using the data set published by [Lessler *et al.*, 2012 *PLoS Pathogens*](https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1002802).
+
+In this data set, cross-sectional antisera were collected, indicating that for each participant, only one titer was available for each tested virus. In this situation, the `group_col` argument can be set to *NULL*, and and since all virus strains have different isolation years, the `mode` argument can be set to *NULL*.
+
+```{r import_lessler_data_example, include=FALSE}
+    
+library(readxl)
+    library(stringr)
+    library(DescTools)
+    library(moments)
+    library(dplyr)
+
+    # source('serometric/R/overallData.R')
+
+    #load data
+    lessler <- read_excel("data/Lessler.xlsx")
+    #data pre-processing
+    lessler$isolation_year <- as.numeric(str_extract(lessler$neut.against, "\\d{4}"))
+    lessler$titers <- floor(lessler$titers)
+
+
+```
+
+```{r lessler_data_example}
+
+    #show the basic structure of the dataset
+    head(lessler,10)
+
+```
+
+#### 3.1.1. Calculate multiple metrics at once
+
+Using `overallData()` function to simultaneously calculate multiple metrics specified in the `required_metrics` argument. The output is a matrix with each individual's antibody profile, in this case for each participant.
+
+```{r overall_calculation_lessler, include=TRUE}
+overallResult <- overallData(data = lessler, 
+                             part_col = "id", # unique id of the participant
+                             weight_col = "isolation_year", # specify the column name for weights.
+                             val_col = "titers", # specify the column name for the titer value
+                             var_trans = 1, 
+                             gmt_output_trans = 1, 
+                             required_metrics = c("AUC",
+                                                  "ATY",
+                                                  "GMT",
+                                                  "Prot_prop",
+                                                  "Width0",
+                                                  "Width2",
+                                                  "Width3"), # metrics to be computed
+                             col_names = c("auc",
+                                           "aty",
+                                           "gmt",
+                                           "prot_prop",
+                                           "Width10",
+                                           "Width40",
+                                           "Width80") # column names for the calculated metrics in the output matrix
+
+                             )
+
+head(overallResult, 10)
+```
+
+#### 3.1.2. Calculate individual metric
+
+You can also calculate a single metric using the corresponding function in the package. This generates a two-column matrix with a unique ID and values for the chosen metric, which can be manually integrated into an overall matrix.
+
+```{r single_calculation_lessler, include=TRUE}
+
+    # average titer year
+    atyResult <- atyData(
+      data = lessler,
+      part_col = c("id"),
+      weight_col = c("isolation_year"), 
+      val_col = c("titers"), 
+      var_trans = 1
+    )
+    
+    # area under the curve
+    aucResult <- aucData(
+      data = lessler,
+      part_col = c("id"),
+      weight_col = c("isolation_year"), 
+      val_col = c("titers"), 
+      var_trans = 1
+    )
+
+    # Gini coefficient   
+    giniResult <- giniData(
+      data = lessler,
+      part_col = c("id"), 
+      val_col = c("titers"), 
+      var_trans = 1
+    )
+    
+     # Geometric mean titer   
+    gmtResult <- gmtData(
+      data = lessler,
+      part_col = c("id"), 
+      val_col = c("titers"), 
+      var_trans = 1,
+      output_trans = 1
+    )
+    
+    # Kurtosis
+    kurtosisResult <- kurtosisData(
+      data = lessler,
+      part_col = c("id"), 
+      weight_col = c("isolation_year"), 
+      val_col = c("titers"), 
+      var_trans = 1
+    )
+    
+    # Maximum titer
+    max_titerResult <- max_titerData(
+      data = lessler,
+      part_col = c("id"), 
+      val_col = c("titers"), 
+      var_trans = 1,
+      output_trans = 1
+    )
+    
+    # The proportion of titers above 40
+    propResult2 <- propData(
+      data = lessler,
+      part_col = c("id"), 
+      val_col = c("titers"), 
+      var_trans = 1,
+      threshold_trans = 1,
+      threshold = 2, 
+      prop_col = "Prop2"
+    )
+    
+    # The proportion of titers above 80
+    propResult3 <-  propData(
+      data = lessler,
+      part_col = c("id"), 
+      val_col = c("titers"), 
+      var_trans = 1,
+      threshold_trans = 1,
+      threshold = 3, 
+      prop_col = "Prop3"
+    )
+    
+    # Using default weight vector
+    prot_propResult <- prot_propData(
+      data = lessler,
+      part_col = c("id"), 
+      val_col = c("titers")
+    )
+    
+    # Skewness
+    skewnessResult <- skewnessData(
+      data = lessler,
+      part_col = c("id"), 
+      weight_col = c("isolation_year"), 
+      val_col = c("titers"), 
+      var_trans = 1
+    )
+    
+     # The width of titers above 40
+    widthResult <- widthData(
+      data = lessler,
+      part_col = c("id"), 
+      weight_col = c("isolation_year"), 
+      val_col = c("titers"), 
+      var_trans = 1, 
+      threshold_trans = 1,
+      threshold = 2, 
+      width_col = "Width2"
+    )
+
+    # Combine calculated metrics 
+    overallResult <- atyResult %>%
+      left_join(aucResult, by = "id") %>%
+      left_join(giniResult, by = "id") %>%
+      left_join(gmtResult, by = "id") %>%
+      left_join(kurtosisResult, by = "id") %>%
+      left_join(max_titerResult, by = "id") %>%
+      left_join(propResult2, by = "id") %>%
+      left_join(propResult3, by = "id") %>%
+      left_join(prot_propResult, by = "id") %>%
+      left_join(skewnessResult, by = "id") %>%
+      left_join(widthResult, by = "id")
+
+    head(overallResult,10)
+    
+```
+
+#### 3.1.3. Profile Plotting
+
+##### 3.1.3.1. Individual Profile
+
+Use the function `individualPlot()` to plot an individual profile.
+
+```{r individual_plot_lessler_single, fig.width=8, fig.height=6, include=TRUE}
+
+# add the column indicating participants' birth year
+lessler$year_of_birth <- lessler$isolation_year - lessler$shift.age
+
+ids = c(143) # Plot the individual profile whose id is 143.
+
+sapply(1:length(ids), function(i) {
+
+  individualPlot(i = i,
+                 ids = ids,
+                 df = lessler,
+                 part_col = "id",
+                 weight_col = "isolation_year",
+                 val_col = "titers",
+                 age_col = "age",
+                 birth_col = "year_of_birth",
+                 sample_years = 2009,
+                 x.min = 1965,
+                 x.max = 2015,
+                 x.diff.1 = 5,
+                 x.diff.2 = 1,
+                 y.min = 0,
+                 y.max = 10,
+                 legends = LETTERS[1])
+
+})
+
+```
+
+You can also plot multiple individual profiles.
+
+```{r individual_plot_lessler_multiple, fig.width=12, fig.height=6, include=TRUE}
+
+ids <- c(143,64,118,34,5,125)  # Plot the profile of the id 143, 64, 118, 34, 5, 125.
+sample_years <- rep(2009,6)
+
+mat <- rbind(matrix(1:6,
+                    nrow = 2, ncol = 3,
+                    byrow = TRUE))
+
+layout(mat,
+       widths = rep(1.5, 3),
+       heights = rep(1.0, 2))
+
+sapply(1:length(ids), function(i) {
+
+  individualPlot(i = i,
+                 ids = ids,
+                 df = lessler,
+                 part_col = "id",
+                 weight_col = "isolation_year",
+                 val_col = "titers",
+                 age_col = "age",
+                 birth_col = "year_of_birth",
+                 sample_years = sample_years,
+                 x.min = 1965,
+                 x.max = 2015,
+                 x.diff.1 = 5,
+                 x.diff.2 = 1,
+                 y.min = 0,
+                 y.max = 10,
+                 legends = LETTERS[1:6])
+
+})
+
+```
+
+##### 3.1.3.2. Profile Comparison
+
+Use the function `dualPlot()` to plot the comparison between a pair of profiles.
+
+```{r, dual_plot_lessler_single, fig.width=8, fig.height=6, include=TRUE}
+
+ids.1 = c(143)
+ids.2 = c(125) # The comparison pair of ids is (143, 125)
+
+sapply(1:length(ids.1), function(i) {
+
+  dualPlot(i = i,
+           ids.1 = ids.1,
+           ids.2 = ids.2,
+           df = lessler,
+           part_col = "id",
+           weight_col = "isolation_year",
+           val_col = "titers",
+           age_col = "age",
+           birth_col = "year_of_birth",
+           sample_years.1 = 2009,
+           sample_years.2 = 2009,
+           x.min = 1965,
+           x.max = 2015,
+           x.diff.1 = 5,
+           x.diff.2 = 1,
+           y.min = 0,
+           y.max = 10,
+           legends = LETTERS[1])
+
+})
+
+```
+
+You can also plot comparisons between multiple pairs of profiles.
+
+```{r, dual_plot_lessler_multiple, fig.width=12, fig.height=6, include=TRUE}
+
+ids.1 = c(143,64,118,34,5,125)
+ids.2 = c(64,118,34,5,125,143) # The comparison pairs of ids are (143,64), (64,118), (118,34), (34,5), (5,125), (125,143).
+
+mat <- rbind(matrix(1:6,
+                    nrow = 2, ncol = 3,
+                    byrow = TRUE))
+
+layout(mat,
+       widths = rep(1.5, 3),
+       heights = rep(1.0, 2))
+
+sapply(1:length(ids.1), function(i) {
+
+  dualPlot(i = i,
+           ids.1 = ids.1,
+           ids.2 = ids.2,
+           df = lessler,
+           part_col = "id",
+           weight_col = "isolation_year",
+           val_col = "titers",
+           age_col = "age",
+           birth_col = "year_of_birth",
+           sample_years.1 = rep(2009, 6),
+           sample_years.2 = rep(2009, 6),
+           x.min = 1965,
+           x.max = 2015,
+           x.diff.1 = 5,
+           x.diff.2 = 1,
+           y.min = 0,
+           y.max = 10,
+           legends = LETTERS[1])
+
+})
+
+```
+
+##### 3.1.3.3. Conceptual Plot
+
+Use the function `conceptualPlotAUC()`, `conceptualPlotWidth()`, `conceptualPlotATY()` to plot the conceptual plots of a profile, giving insights into the profile regarding AUC, Width, and ATY.
+
+```{r, conceptual_plot_lessler_single, fig.width=6, fig.height=12, include=TRUE}
+
+ids <- c(143) # Plot the profile whose id is 143
+
+mat <- rbind(matrix(1:3,
+                    nrow = 3, ncol = 1,
+                    byrow = FALSE))
+
+layout(mat,
+       widths = 1.5,
+       heights = c(1.0, 1.0, 1.0))
+
+sapply(1:length(ids), function(i) {
+
+  # auc
+  conceptualPlotAUC(i = i,
+                    ids = ids,
+                    df = lessler,
+                    part_col = "id",
+                    weight_col = "isolation_year",
+                    val_col = "titers",
+                    age_col = "age",
+                    var_trans = 1,
+                    legends = LETTERS[1])
+
+  # width 1:40
+  conceptualPlotWidth(i = i,
+                      ids = ids,
+                      df = lessler,
+                      part_col = "id",
+                      weight_col = "isolation_year",
+                      val_col = "titers",
+                      var_trans = 1,
+                      legends = LETTERS[2])
+
+  # aty
+  conceptualPlotATY(i = i,
+                    ids = ids,
+                    df = lessler,
+                    part_col = "id",
+                    weight_col = "isolation_year",
+                    val_col = "titers",
+                    var_trans = 1,
+                    legends = LETTERS[3])
+
+})
+
+```
+You can plot conceptual plots of multiple profiles as well.
+```{r, conceptual_plot_lessler_multiple, fig.width=18, fig.height=12, include=TRUE}
+
+ids <- c(143,118,5) # Plot the profiles whose id are 143, 118, 5.
+
+mat <- rbind(matrix(1:9,
+                    nrow = 3, ncol = 3,
+                    byrow = FALSE))
+
+layout(mat,
+       widths = rep(1.5, 3),
+       heights = c(1.0, 1.0, 1.0))
+
+sapply(1:length(ids), function(i) {
+
+  # auc
+  conceptualPlotAUC(i = i,
+                    ids = ids,
+                    df = lessler,
+                    part_col = "id",
+                    weight_col = "isolation_year",
+                    val_col = "titers",
+                    age_col = "age",
+                    var_trans = 1,
+                    legends = LETTERS[1:3])
+
+  # width 1:40
+  conceptualPlotWidth(i = i,
+                      ids = ids,
+                      df = lessler,
+                      part_col = "id",
+                      weight_col = "isolation_year",
+                      val_col = "titers",
+                      var_trans = 1,
+                      legends = LETTERS[4:6])
+
+  # aty
+  conceptualPlotATY(i = i,
+                    ids = ids,
+                    df = lessler,
+                    part_col = "id",
+                    weight_col = "isolation_year",
+                    val_col = "titers",
+                    var_trans = 1,
+                    legends = LETTERS[7:9])
+
+})
+
+```
+
+------------------------------------------------------------------------
+
+### 3.2. Fonville *et al*. 2014 *Science*
+
+This is an example using the data set published by [*Fonville* et al., 2014 *Science*](https://www.science.org/doi/10.1126/science.1256427).
+
+In this dataset, longitudinal antisera were collected from the same population over six years. For each participant, multiple titer values are available for each tested virus, corresponding to antiserum collected during each visit.
+
+In this case, the `group_col` is the sample year, and different viruses share the same `isolation_year`, making the `mode` necessary.
+
+Additionally, the raw data has a specific structure where each tested virus forms one column. Therefore, data transformation (from a wide table to a long table) should be done first.
+
+```{r import_fonville_data_example, include=FALSE}
+    
+    library(readxl)
+    library(stringr)
+    library(DescTools)
+    library(moments)
+    library(dplyr)
+    library(tidyverse) #this is for data transformation
+
+
+    #load valid data
+    fonville <- read_excel("data/Fonville.xlsx", n_max = 324)
+    
+```
+
+#### 3.2.0. Data Transformation
+
+```{r fonville_data_transformation}
+
+    # data transformation
+    transformed_df <- dataTransform(df = fonville, panel = 1, col_start = 7, col_end = ncol(fonville))
+    
+    transformed_df <- transformed_df %>%
+  mutate(strain = case_when(
+    str_detect(strain, "/02$") ~ str_replace(strain, "/02$", "/2002"),
+    TRUE ~ strain))%>%
+  mutate(titer = case_when(
+    str_detect(titer, "\\*") ~ str_replace(titer, "\\*", "10"),
+    TRUE ~ titer))%>%
+  mutate(titer = case_when(
+    str_detect(titer, "<10") ~ str_replace(titer, "<10", "5"),
+    TRUE ~ titer))%>%
+  mutate(titer = case_when(
+    str_detect(titer, ">=1280") ~ str_replace(titer, ">=1280", "9"),
+    TRUE ~ titer))%>%
+  mutate(titer = as.numeric(titer)) %>%
+  mutate(
+    isolation_year = case_when(
+      str_detect(str_sub(strain, -4), "^\\d{4}$") ~ as.numeric(str_sub(strain, -4)),
+      TRUE ~ as.numeric(str_sub(strain, -2)) + 1900
+    )
+  )
+
+    # show the basic structure of the dataset
+    head(transformed_df,10)
+```
+You can also use the second panel in `dataTransform()` to combine the grouping columns. The following example combines the `Sample Year` and `Sample` columns, but in the later illustration, we will still use `transformed_df`, which considers `Sample Year` alone as the grouping variable.
+
+```{r fonville_data_example}
+
+    combined_df <- dataTransform(df = transformed_df, panel = 2, group_cols = c("Sample Year", "Sample"), def = "/", drop = 1)
+
+    head(combined_df,10) # The new column "Sample Year/Sample" combines the two columns and forms a new variable that can be used for grouping.
+
+```
+
+#### 3.2.1. Calculate multiple metrics at once
+
+Using `overallData()` function to simultaneously calculate multiple metrics specified in the `required_metrics` argument. The output is a matrix with each individual's antibody profile, in this case for each participant.
+
+```{r overall_calculation_fonville}
+
+ overallResultFonville <- overallData(
+   transformed_df, 
+   part_col = "Subject Number", 
+   weight_col = "isolation_year", 
+   val_col = "titer", 
+   group_col = "Sample Year", 
+   var_trans = 0, 
+   max_titer_output_trans = 1, 
+   mode = "mean", 
+   required_metrics = c("gini_coefficient","Kurtosis","Skewness","Prop0","Prop2","Prop3"),
+   col_names = c("Gini","Kurt","Skew","prop0","prop2","prop3")
+ )
+ 
+    head(overallResultFonville, 10)
+```
+
+#### 3.2.2. Calculate individual metric
+
+Similarly, you can also calculate a single metric using the corresponding function in the package.
+
+```{r single_calculation_fonville}
+
+    atyResult <- atyData(
+      transformed_df,
+      part_col = c("Subject Number"),
+      weight_col = c("isolation_year"), 
+      val_col = c("titer"), 
+      group_col = c("Sample Year"),
+      var_trans = 0, 
+      aty_col = "aty"
+    )
+
+    aucResult <- aucData(
+      transformed_df,
+      part_col = c("Subject Number"),
+      weight_col = c("isolation_year"), 
+      val_col = c("titer"), 
+      group_col = c("Sample Year"),
+      var_trans = 0,
+      mode="mean", 
+      auc_col = "auc"
+    )
+    
+    giniResult <- giniData(
+      transformed_df,
+      part_col = c("Subject Number"), 
+      val_col = c("titer"), 
+      group_col = c("Sample Year"),
+      var_trans = 0
+    )
+    
+    gmtResult <- gmtData(
+      transformed_df,
+      part_col = c("Subject Number"), 
+      val_col = c("titer"), 
+      group_col = c("Sample Year"),
+      var_trans = 0,
+      output_trans = 1
+    )
+    
+    kurtosisResult <- kurtosisData(
+      transformed_df,
+      part_col = c("Subject Number"),
+      weight_col = c("isolation_year"), 
+      val_col = c("titer"), 
+      group_col = c("Sample Year"),
+      var_trans = 0
+    )
+    
+    max_titerResult <-max_titerData(
+      transformed_df,
+      part_col = c("Subject Number"), 
+      val_col = c("titer"),
+      group_col = c("Sample Year"),
+      var_trans = 0,
+      output_trans = 1
+    )
+    
+    #the proportion of titers above 40
+    propResult <- propData(
+      transformed_df,
+      part_col = c("Subject Number"),
+      val_col = c("titer"), 
+      group_col = c("Sample Year"),
+      var_trans = 0,
+      threshold_trans = 1,
+      threshold = 2
+    ) 
+    
+    prot_propResult <- prot_propData(
+      transformed_df,
+      part_col = c("Subject Number"),
+      val_col = c("titer"),
+      group_col = c("Sample Year"), 
+      min.y = 0, 
+      weight = c(0,0.3,0.5,0.8,0.9)
+    )
+    
+    skewnessResult <- skewnessData(
+      transformed_df,
+      part_col = c("Subject Number"),
+      weight_col = c("isolation_year"), 
+      val_col = c("titer"), 
+      group_col = c("Sample Year"),
+      var_trans = 0
+    )
+    
+    #the width of titers above 40
+    widthResult2 <- widthData(
+      transformed_df,
+      part_col = c("Subject Number"),
+      weight_col = c("isolation_year"), 
+      val_col = c("titer"), 
+      group_col = c("Sample Year"),
+      var_trans = 0,
+      threshold_trans = 1,
+      threshold = 2,
+      mode="mean",
+      width_col = "Width2"
+    ) 
+    
+    #the width of titers above 80
+    widthResult3 <- widthData(
+      transformed_df,
+      part_col = c("Subject Number"),
+      weight_col = c("isolation_year"), 
+      val_col = c("titer"), 
+      group_col = c("Sample Year"),
+      var_trans = 0,
+      threshold_trans = 1,
+      threshold = 3,
+      mode="mean",
+      width_col = "Width3"
+    )
+    
+    overallResult <- atyResult %>%
+      left_join(aucResult, by = c("Subject Number","Sample Year")) %>%
+      left_join(giniResult, by = c("Subject Number","Sample Year")) %>%
+      left_join(gmtResult, by = c("Subject Number","Sample Year")) %>%
+      left_join(kurtosisResult, by = c("Subject Number","Sample Year")) %>%
+      left_join(max_titerResult, by = c("Subject Number","Sample Year")) %>%
+      left_join(propResult, by = c("Subject Number","Sample Year")) %>%
+      left_join(prot_propResult, by = c("Subject Number","Sample Year")) %>%
+      left_join(skewnessResult, by = c("Subject Number","Sample Year")) %>%
+      left_join(widthResult2, by = c("Subject Number","Sample Year"))%>%
+      left_join(widthResult3, by = c("Subject Number","Sample Year"))
+
+    head(overallResult,10)
+```
+
+#### 3.1.3. Profile Plotting
+
+##### 3.1.3.1. Individual Profile
+
+Use the function `individualPlot()` to plot an individual profile.
+
+```{r individual_plot_fonville_single, fig.width=8, fig.height=6, include=TRUE}
+
+# add the column indicating participants' age
+transformed_df$age <- transformed_df$`Sample Year` - transformed_df$`Year of Birth`
+
+ids <- c(19)
+
+# The plotted profile's id is 19 and group is 2007
+sapply(1:length(ids), function(i) {
+
+  individualPlot(i = i,
+                 ids = ids,
+                 df = transformed_df,
+                 part_col = "Subject Number",
+                 weight_col = "isolation_year",
+                 val_col = "titer",
+                 group_col = "Sample Year",
+                 groups = 2007,
+                 age_col = "age",
+                 birth_col = "Year of Birth",
+                 sample_years = 2007,
+                 mode = "mean",
+                 var_trans = 0,
+                 adjust = -2,
+                 x.min = 1965,
+                 x.max = 2015,
+                 y.min = 0,
+                 y.max = 8,
+                 legends = "A")
+
+})
+
+```
+
+You can also plot multiple individual profiles in different sample groups, if applicable.
+
+```{r individual_plot_fonville_multiple, fig.width=12, fig.height=6, include=TRUE}
+
+ids <- c(48,19,36,2,23,46)
+
+mat <- rbind(matrix(1:6,
+                    nrow = 2, ncol = 3,
+                    byrow = TRUE))
+
+layout(mat,
+       widths = rep(1.5, 3),
+       heights = c(1.0, 1.0))
+
+# The plotted profiles' (id, group) are (43, 2007), (19, 2007), (36, 2007), (2, 2008), (23, 2008), (46,2008).
+sapply(1:length(ids), function(i) {
+
+  individualPlot(i = i,
+                 ids = ids,
+                 df = transformed_df,
+                 part_col = "Subject Number",
+                 weight_col = "isolation_year",
+                 val_col = "titer",
+                 group_col = "Sample Year",
+                 groups = c(rep(2007, 3), rep(2008,3)), # This determines the sample group of the profile.
+                 age_col = "age",
+                 birth_col = "Year of Birth",
+                 sample_years = c(rep(2007, 3), rep(2008,3)),
+                 mode = "mean",
+                 var_trans = 0,
+                 adjust = -2,
+                 x.min = 1965,
+                 x.max = 2015,
+                 y.min = 0,
+                 y.max = 8,
+                 legends = LETTERS[1:6])
+
+})
+
+```
+
+##### 3.1.3.2. Profile Comparison
+
+Use the function `dualPlot()` to plot the comparison between a pair of profiles. The profiles in a pair can be from different participants and different sample groups. In other words, any two different profiles would be applicable.
+
+```{r, dual_plot_fonville_single, fig.width=8, fig.height=6, include=TRUE}
+
+ids.1 <- c(19) 
+ids.2 <- c(23)
+
+# The comparison would be between the profile whose id is 19 and group is 2007, and the profile whose id is 23 and group is 2012.
+sapply(1:length(ids.1), function(i) {
+
+  dualPlot(i = i,
+           ids.1 = ids.1,
+           ids.2 = ids.2,
+           df = transformed_df,
+           part_col = "Subject Number",
+           weight_col = "isolation_year",
+           val_col = "titer",
+           group_col = "Sample Year",
+           groups.1 = 2007,
+           groups.2 = 2012,
+           age_col = "age",
+           birth_col = "Year of Birth",
+           sample_years.1 = 2007,
+           sample_years.2 = 2012,
+           mode = "mean",
+           var_trans = 0,
+           adjust = -2,
+           x.min = 1965,
+           x.max = 2015,
+           y.min = 0,
+           y.max = 8,
+           legends = "A")
+
+})
+
+```
+
+You can also plot comparisons between multiple pairs of profiles.
+
+```{r, dual_plot_fonville_multiple, fig.width=18, fig.height=4, include=TRUE}
+
+ids.1 <- c(48,36,46) # Randomly chosen numbers
+ids.2 <- c(19,2,23) # Randomly chosen numbers
+
+mat <- rbind(matrix(1:3,
+                    nrow = 1, ncol = 3,
+                    byrow = TRUE))
+
+layout(mat,
+       widths = rep(1.5, 3),
+       heights = c(1.0))
+
+# [(id1, group1), (id2, group2)] states the comparison between the profile whose id is id1 and group is group1, and the profile whose id is id2 and group is group2.
+
+# The following comparisons would be between three pairs of profiles: [(48, 2007), (19, 2012)], [(36, 2007), (2, 2012)], [(46, 2007), (23, 2012)].
+
+sapply(1:length(ids.1), function(i) {
+
+  dualPlot(i = i,
+           ids.1 = ids.1,
+           ids.2 = ids.2,
+           df = transformed_df,
+           part_col = "Subject Number",
+           weight_col = "isolation_year",
+           val_col = "titer",
+           group_col = "Sample Year",
+           groups.1 = rep(2007, 3), # This determines the sample group of the first participants in the comparison pairs.
+           groups.2 = rep(2012, 3), # This determines the sample group of the second participants in the comparison pairs.
+           age_col = "age",
+           birth_col = "Year of Birth",
+           sample_years.1 = rep(2007, 3),
+           sample_years.2 = rep(2012, 3),
+           mode = "mean",
+           var_trans = 0,
+           adjust = -2,
+           x.min = 1965,
+           x.max = 2015,
+           y.min = 0,
+           y.max = 8,
+           legends = LETTERS[1:6])
+
+})
+
+```
+
+##### 3.1.3.3. Conceptual Plot
+
+Use the function `conceptualPlotAUC()`, `conceptualPlotWidth()`, `conceptualPlotATY()` to plot the conceptual plots of a profile, giving insights into the profile regarding AUC, Width, and ATY.
+
+```{r, conceptual_plot_fonville_single, fig.width=6, fig.height=12, include=TRUE}
+
+ids <- c(19)
+
+mat <- rbind(matrix(1:3,
+                    nrow = 3, ncol = 1,
+                    byrow = FALSE))
+
+layout(mat,
+       widths = 1.5,
+       heights = c(1.0, 1.0, 1.0))
+
+# The conceptual plots of the profile whose id is 19 and goup is 2011.
+sapply(1:length(ids), function(i) {
+
+  # auc
+  conceptualPlotAUC(i = i,
+                    ids = ids,
+                    df = transformed_df,
+                    part_col = "Subject Number",
+                    weight_col = "isolation_year",
+                    val_col = "titer",
+                    group_col = "Sample Year",
+                    groups = 2011,
+                    age_col = "age",
+                    var_trans = 0,
+                    mode = "mean",
+                    y.min = -2,
+                    y.max = 6,
+                    legends = LETTERS[1])
+
+  # width 1:40
+  conceptualPlotWidth(i = i,
+                      ids = ids,
+                      df = transformed_df,
+                      part_col = "Subject Number",
+                      weight_col = "isolation_year",
+                      val_col = "titer",
+                      group_col = "Sample Year",
+                      groups = 2011,
+                      var_trans = 0,
+                      mode = "mean",
+                      cutoff = 1,
+                      y.min = -2,
+                      y.max = 6,
+                      legends = LETTERS[2])
+
+  # aty
+  conceptualPlotATY(i = i,
+                    ids = ids,
+                    df = transformed_df,
+                    part_col = "Subject Number",
+                    weight_col = "isolation_year",
+                    val_col = "titer",
+                    group_col = "Sample Year",
+                    groups = 2011,
+                    var_trans = 0,
+                    mode = "mean",
+                    y.min = -2,
+                    y.max = 6,
+                    legends = LETTERS[3])
+
+})
+
+```
+You can plot conceptual plots of multiple profiles as well.
+```{r, conceptual_plot_fonville_multiple, fig.width=18, fig.height=12, include=TRUE}
+
+ids <- c(48,36,23) 
+
+mat <- rbind(matrix(1:9,
+                    nrow = 3, ncol = 3,
+                    byrow = FALSE))
+
+layout(mat,
+       widths = rep(1.5, 3),
+       heights = c(1.0, 1.0, 1.0))
+
+# The conceptual plots of the profiles whose (id, group) are (48, 2009), (36, 2010), (23, 2011).
+sapply(1:length(ids), function(i) {
+
+  # auc
+  conceptualPlotAUC(i = i,
+                    ids = ids,
+                    df = transformed_df,
+                    part_col = "Subject Number",
+                    weight_col = "isolation_year",
+                    val_col = "titer",
+                    group_col = "Sample Year",
+                    groups = c(2009, 2010, 2011), # This determines the sample group of the profiles.
+                    age_col = "age",
+                    var_trans = 0,
+                    mode = "mean",
+                    y.min = -2,
+                    y.max = 6,
+                    legends = LETTERS[1:3])
+
+  # width 1:40
+  conceptualPlotWidth(i = i,
+                      ids = ids,
+                      df = transformed_df,
+                      part_col = "Subject Number",
+                      weight_col = "isolation_year",
+                      val_col = "titer",
+                      group_col = "Sample Year",
+                      groups = c(2009, 2010, 2011),
+                      var_trans = 0,
+                      mode = "mean",
+                      cutoff = 1,
+                      y.min = -2,
+                      y.max = 6,
+                      legends = LETTERS[4:6])
+
+  # aty
+  conceptualPlotATY(i = i,
+                    ids = ids,
+                    df = transformed_df,
+                    part_col = "Subject Number",
+                    weight_col = "isolation_year",
+                    val_col = "titer",
+                    group_col = "Sample Year",
+                    groups = c(2009, 2010, 2011),
+                    var_trans = 0,
+                    mode = "mean",
+                    y.min = -2,
+                    y.max = 6,
+                    legends = LETTERS[7:9])
+
+})
+
+```
+
