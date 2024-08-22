@@ -374,6 +374,250 @@ overall matrix.
     ## 9  -0.5062919 0.2916667
     ## 10 -0.7370504 0.5345833
 
+#### 3.1.3. Profile Plotting
+
+##### 3.1.3.1. Individual Profile
+
+Use the function `individualPlot()` to plot an individual profile.
+
+    # add the column indicating participants' birth year
+    lessler$year_of_birth <- lessler$isolation_year - lessler$shift.age
+
+    ids = c(143) # Plot the individual profile whose id is 143.
+
+    sapply(1:length(ids), function(i) {
+
+      individualPlot(i = i,
+                     ids = ids,
+                     df = lessler,
+                     part_col = "id",
+                     weight_col = "isolation_year",
+                     val_col = "titers",
+                     age_col = "age",
+                     birth_col = "year_of_birth",
+                     sample_years = 2009,
+                     x.min = 1965,
+                     x.max = 2015,
+                     x.diff.1 = 5,
+                     x.diff.2 = 1,
+                     y.min = 0,
+                     y.max = 10,
+                     legends = LETTERS[1])
+
+    })
+
+![](README_files/figure-markdown_strict/individual_plot_lessler_single-1.png)
+
+You can also plot multiple individual profiles.
+
+    ids <- c(143,64,118,34,5,125)  # Plot the profile of the id 143, 64, 118, 34, 5, 125.
+    sample_years <- rep(2009,6)
+
+    mat <- rbind(matrix(1:6,
+                        nrow = 2, ncol = 3,
+                        byrow = TRUE))
+
+    layout(mat,
+           widths = rep(1.5, 3),
+           heights = rep(1.0, 2))
+
+    sapply(1:length(ids), function(i) {
+
+      individualPlot(i = i,
+                     ids = ids,
+                     df = lessler,
+                     part_col = "id",
+                     weight_col = "isolation_year",
+                     val_col = "titers",
+                     age_col = "age",
+                     birth_col = "year_of_birth",
+                     sample_years = sample_years,
+                     x.min = 1965,
+                     x.max = 2015,
+                     x.diff.1 = 5,
+                     x.diff.2 = 1,
+                     y.min = 0,
+                     y.max = 10,
+                     legends = LETTERS[1:6])
+
+    })
+
+![](README_files/figure-markdown_strict/individual_plot_lessler_multiple-1.png)
+
+##### 3.1.3.2. Profile Comparison
+
+Use the function `dualPlot()` to plot the comparison between a pair of
+profiles.
+
+    ids.1 = c(143)
+    ids.2 = c(125) # The comparison pair of ids is (143, 125)
+
+    sapply(1:length(ids.1), function(i) {
+
+      dualPlot(i = i,
+               ids.1 = ids.1,
+               ids.2 = ids.2,
+               df = lessler,
+               part_col = "id",
+               weight_col = "isolation_year",
+               val_col = "titers",
+               age_col = "age",
+               birth_col = "year_of_birth",
+               sample_years.1 = 2009,
+               sample_years.2 = 2009,
+               x.min = 1965,
+               x.max = 2015,
+               x.diff.1 = 5,
+               x.diff.2 = 1,
+               y.min = 0,
+               y.max = 10,
+               legends = LETTERS[1])
+
+    })
+
+![](README_files/figure-markdown_strict/dual_plot_lessler_single-1.png)
+
+You can also plot comparisons between multiple pairs of profiles.
+
+    ids.1 = c(143,64,118,34,5,125)
+    ids.2 = c(64,118,34,5,125,143) # The comparison pairs of ids are (143,64), (64,118), (118,34), (34,5), (5,125), (125,143).
+
+    mat <- rbind(matrix(1:6,
+                        nrow = 2, ncol = 3,
+                        byrow = TRUE))
+
+    layout(mat,
+           widths = rep(1.5, 3),
+           heights = rep(1.0, 2))
+
+    sapply(1:length(ids.1), function(i) {
+
+      dualPlot(i = i,
+               ids.1 = ids.1,
+               ids.2 = ids.2,
+               df = lessler,
+               part_col = "id",
+               weight_col = "isolation_year",
+               val_col = "titers",
+               age_col = "age",
+               birth_col = "year_of_birth",
+               sample_years.1 = rep(2009, 6),
+               sample_years.2 = rep(2009, 6),
+               x.min = 1965,
+               x.max = 2015,
+               x.diff.1 = 5,
+               x.diff.2 = 1,
+               y.min = 0,
+               y.max = 10,
+               legends = LETTERS[1])
+
+    })
+
+![](README_files/figure-markdown_strict/dual_plot_lessler_multiple-1.png)
+
+##### 3.1.3.3. Conceptual Plot
+
+Use the function `conceptualPlotAUC()`, `conceptualPlotWidth()`,
+`conceptualPlotATY()` to plot the conceptual plots of a profile, giving
+insights into the profile regarding AUC, Width, and ATY.
+
+    ids <- c(143) # Plot the profile whose id is 143
+
+    mat <- rbind(matrix(1:3,
+                        nrow = 3, ncol = 1,
+                        byrow = FALSE))
+
+    layout(mat,
+           widths = 1.5,
+           heights = c(1.0, 1.0, 1.0))
+
+    sapply(1:length(ids), function(i) {
+
+      # auc
+      conceptualPlotAUC(i = i,
+                        ids = ids,
+                        df = lessler,
+                        part_col = "id",
+                        weight_col = "isolation_year",
+                        val_col = "titers",
+                        age_col = "age",
+                        var_trans = 1,
+                        legends = LETTERS[1])
+
+      # width 1:40
+      conceptualPlotWidth(i = i,
+                          ids = ids,
+                          df = lessler,
+                          part_col = "id",
+                          weight_col = "isolation_year",
+                          val_col = "titers",
+                          var_trans = 1,
+                          legends = LETTERS[2])
+
+      # aty
+      conceptualPlotATY(i = i,
+                        ids = ids,
+                        df = lessler,
+                        part_col = "id",
+                        weight_col = "isolation_year",
+                        val_col = "titers",
+                        var_trans = 1,
+                        legends = LETTERS[3])
+
+    })
+
+![](README_files/figure-markdown_strict/conceptual_plot_lessler_single-1.png)
+
+
+You can plot conceptual plots of multiple profiles as well.
+
+    ids <- c(143,118,5) # Plot the profiles whose id are 143, 118, 5.
+
+    mat <- rbind(matrix(1:9,
+                        nrow = 3, ncol = 3,
+                        byrow = FALSE))
+
+    layout(mat,
+           widths = rep(1.5, 3),
+           heights = c(1.0, 1.0, 1.0))
+
+    sapply(1:length(ids), function(i) {
+
+      # auc
+      conceptualPlotAUC(i = i,
+                        ids = ids,
+                        df = lessler,
+                        part_col = "id",
+                        weight_col = "isolation_year",
+                        val_col = "titers",
+                        age_col = "age",
+                        var_trans = 1,
+                        legends = LETTERS[1:3])
+
+      # width 1:40
+      conceptualPlotWidth(i = i,
+                          ids = ids,
+                          df = lessler,
+                          part_col = "id",
+                          weight_col = "isolation_year",
+                          val_col = "titers",
+                          var_trans = 1,
+                          legends = LETTERS[4:6])
+
+      # aty
+      conceptualPlotATY(i = i,
+                        ids = ids,
+                        df = lessler,
+                        part_col = "id",
+                        weight_col = "isolation_year",
+                        val_col = "titers",
+                        var_trans = 1,
+                        legends = LETTERS[7:9])
+
+    })
+
+![](README_files/figure-markdown_strict/conceptual_plot_lessler_multiple-1.png)
+
 ------------------------------------------------------------------------
 
 ### 3.2. Fonville *et al*. 2014 *Science*
@@ -393,32 +637,72 @@ Additionally, the raw data has a specific structure where each tested
 virus forms one column. Therefore, data transformation (from a wide
 table to a long table) should be done first.
 
-        # data transformation
-        transformed_df <- transform(fonville)
+#### 3.2.0. Data Transformation
 
-    ## Warning: There was 1 warning in `mutate()`.
-    ## ℹ In argument: `isolation_year = case_when(...)`.
-    ## Caused by warning:
-    ## ! NAs introduced by coercion
+        # data transformation
+        transformed_df <- dataTransform(df = fonville, panel = 1, col_start = 7, col_end = ncol(fonville))
+        
+        transformed_df <- transformed_df %>%
+      mutate(strain = case_when(
+        str_detect(strain, "/02$") ~ str_replace(strain, "/02$", "/2002"),
+        TRUE ~ strain))%>%
+      mutate(titer = case_when(
+        str_detect(titer, "\\*") ~ str_replace(titer, "\\*", "10"),
+        TRUE ~ titer))%>%
+      mutate(titer = case_when(
+        str_detect(titer, "<10") ~ str_replace(titer, "<10", "5"),
+        TRUE ~ titer))%>%
+      mutate(titer = case_when(
+        str_detect(titer, ">=1280") ~ str_replace(titer, ">=1280", "9"),
+        TRUE ~ titer))%>%
+      mutate(titer = as.numeric(titer)) %>%
+      mutate(
+        isolation_year = case_when(
+          str_detect(str_sub(strain, -4), "^\\d{4}$") ~ as.numeric(str_sub(strain, -4)),
+          TRUE ~ as.numeric(str_sub(strain, -2)) + 1900
+        )
+      )
 
         # show the basic structure of the dataset
         head(transformed_df,10)
 
-    ## # A tibble: 10 × 9
-    ##    `Subject Number` `Sample Year` `Year of Birth` Sample  `PCR Results` Row in Fonville Fig S1…¹ strain
-    ##               <dbl>         <dbl>           <dbl> <chr>   <chr>                            <dbl> <chr> 
-    ##  1                1          2007            1957 H3 PCR+ <NA>                                63 BI/16…
-    ##  2                1          2007            1957 H3 PCR+ <NA>                                63 BI/21…
-    ##  3                1          2007            1957 H3 PCR+ <NA>                                63 BI/17…
-    ##  4                1          2007            1957 H3 PCR+ <NA>                                63 BI/22…
-    ##  5                1          2007            1957 H3 PCR+ <NA>                                63 NL/23…
-    ##  6                1          2007            1957 H3 PCR+ <NA>                                63 NL/62…
-    ##  7                1          2007            1957 H3 PCR+ <NA>                                63 NL/82…
-    ##  8                1          2007            1957 H3 PCR+ <NA>                                63 NL/17…
-    ##  9                1          2007            1957 H3 PCR+ <NA>                                63 JO/33…
-    ## 10                1          2007            1957 H3 PCR+ <NA>                                63 SD/9/…
-    ## # ℹ abbreviated name: ¹​`Row in Fonville Fig S15`
-    ## # ℹ 2 more variables: titer <dbl>, isolation_year <dbl>
+    ## # A tibble: 10 x 9
+    ##    `Subject Number` `Sample Year` `Year of Birth` Sample  `PCR Results` `Row in Fonville Fig S15` strain      titer isolation_year
+    ##               <dbl>         <dbl>           <dbl> <chr>   <chr>                             <dbl> <chr>       <dbl>          <dbl>
+    ##  1                1          2007            1957 H3 PCR+ <NA>                                 63 BI/16190/68    10           1968
+    ##  2                1          2007            1957 H3 PCR+ <NA>                                 63 BI/21793/72    10           1972
+    ##  3                1          2007            1957 H3 PCR+ <NA>                                 63 BI/1761/76     10           1976
+    ##  4                1          2007            1957 H3 PCR+ <NA>                                 63 BI/2271/76     10           1976
+    ##  5                1          2007            1957 H3 PCR+ <NA>                                 63 NL/233/82      10           1982
+    ##  6                1          2007            1957 H3 PCR+ <NA>                                 63 NL/620/89      10           1989
+    ##  7                1          2007            1957 H3 PCR+ <NA>                                 63 NL/823/92      10           1992
+    ##  8                1          2007            1957 H3 PCR+ <NA>                                 63 NL/179/93     160           1993
+    ##  9                1          2007            1957 H3 PCR+ <NA>                                 63 JO/33/94       80           1994
+    ## 10                1          2007            1957 H3 PCR+ <NA>                                 63 SD/9/93        10           1993
+
+You can also use the second panel in `dataTransform()` to combine the
+grouping columns. The following example combines the `Sample Year` and
+`Sample` columns, but in the later illustration, we will still use
+`transformed_df`, which considers `Sample Year` alone as the grouping
+variable.
+
+        combined_df <- dataTransform(df = transformed_df, panel = 2, group_cols = c("Sample Year", "Sample"), def = "/", drop = 1)
+
+        head(combined_df,10) # The new column "Sample Year/Sample" combines the two columns and forms a new variable that can be used for grouping.
+
+    ## # A tibble: 10 x 8
+    ##    `Subject Number` `Year of Birth` `PCR Results` `Row in Fonville Fig S15` strain      titer isolation_year `Sample Year/Sample`
+    ##               <dbl>           <dbl> <chr>                             <dbl> <chr>       <dbl>          <dbl> <chr>               
+    ##  1                1            1957 <NA>                                 63 BI/16190/68    10           1968 2007/H3 PCR+        
+    ##  2                1            1957 <NA>                                 63 BI/21793/72    10           1972 2007/H3 PCR+        
+    ##  3                1            1957 <NA>                                 63 BI/1761/76     10           1976 2007/H3 PCR+        
+    ##  4                1            1957 <NA>                                 63 BI/2271/76     10           1976 2007/H3 PCR+        
+    ##  5                1            1957 <NA>                                 63 NL/233/82      10           1982 2007/H3 PCR+        
+    ##  6                1            1957 <NA>                                 63 NL/620/89      10           1989 2007/H3 PCR+        
+    ##  7                1            1957 <NA>                                 63 NL/823/92      10           1992 2007/H3 PCR+        
+    ##  8                1            1957 <NA>                                 63 NL/179/93     160           1993 2007/H3 PCR+        
+    ##  9                1            1957 <NA>                                 63 JO/33/94       80           1994 2007/H3 PCR+        
+    ## 10                1            1957 <NA>                                 63 SD/9/93        10           1993 2007/H3 PCR+
 
 #### 3.2.1. Calculate multiple metrics at once
 
@@ -608,3 +892,309 @@ corresponding function in the package.
     ## 8   0.5964912       0.9 -0.3756182 0.3015671  9.849466e-02
     ## 9   0.6491228       0.9 -0.2995806 0.2786792  1.152329e-01
     ## 10  0.3859649       0.9 -1.4286519 0.2842462  1.059375e-01
+
+#### 3.1.3. Profile Plotting
+
+##### 3.1.3.1. Individual Profile
+
+Use the function `individualPlot()` to plot an individual profile.
+
+    # add the column indicating participants' age
+    transformed_df$age <- transformed_df$`Sample Year` - transformed_df$`Year of Birth`
+
+    ids <- c(19)
+
+    # The plotted profile's id is 19 and group is 2007
+    sapply(1:length(ids), function(i) {
+
+      individualPlot(i = i,
+                     ids = ids,
+                     df = transformed_df,
+                     part_col = "Subject Number",
+                     weight_col = "isolation_year",
+                     val_col = "titer",
+                     group_col = "Sample Year",
+                     groups = 2007,
+                     age_col = "age",
+                     birth_col = "Year of Birth",
+                     sample_years = 2007,
+                     mode = "mean",
+                     var_trans = 0,
+                     adjust = -2,
+                     x.min = 1965,
+                     x.max = 2015,
+                     y.min = 0,
+                     y.max = 8,
+                     legends = "A")
+
+    })
+
+![](README_files/figure-markdown_strict/individual_plot_fonville_single-1.png)
+
+
+You can also plot multiple individual profiles in different sample
+groups, if applicable.
+
+    ids <- c(48,19,36,2,23,46)
+
+    mat <- rbind(matrix(1:6,
+                        nrow = 2, ncol = 3,
+                        byrow = TRUE))
+
+    layout(mat,
+           widths = rep(1.5, 3),
+           heights = c(1.0, 1.0))
+
+    # The plotted profiles' (id, group) are (43, 2007), (19, 2007), (36, 2007), (2, 2008), (23, 2008), (46,2008).
+    sapply(1:length(ids), function(i) {
+
+      individualPlot(i = i,
+                     ids = ids,
+                     df = transformed_df,
+                     part_col = "Subject Number",
+                     weight_col = "isolation_year",
+                     val_col = "titer",
+                     group_col = "Sample Year",
+                     groups = c(rep(2007, 3), rep(2008,3)), # This determines the sample group of the profile.
+                     age_col = "age",
+                     birth_col = "Year of Birth",
+                     sample_years = c(rep(2007, 3), rep(2008,3)),
+                     mode = "mean",
+                     var_trans = 0,
+                     adjust = -2,
+                     x.min = 1965,
+                     x.max = 2015,
+                     y.min = 0,
+                     y.max = 8,
+                     legends = LETTERS[1:6])
+
+    })
+
+![](README_files/figure-markdown_strict/individual_plot_fonville_multiple-1.png)
+
+
+##### 3.1.3.2. Profile Comparison
+
+Use the function `dualPlot()` to plot the comparison between a pair of
+profiles. The profiles in a pair can be from different participants and
+different sample groups. In other words, any two different profiles
+would be applicable.
+
+    ids.1 <- c(19) 
+    ids.2 <- c(23)
+
+    # The comparison would be between the profile whose id is 19 and group is 2007, and the profile whose id is 23 and group is 2012.
+    sapply(1:length(ids.1), function(i) {
+
+      dualPlot(i = i,
+               ids.1 = ids.1,
+               ids.2 = ids.2,
+               df = transformed_df,
+               part_col = "Subject Number",
+               weight_col = "isolation_year",
+               val_col = "titer",
+               group_col = "Sample Year",
+               groups.1 = 2007,
+               groups.2 = 2012,
+               age_col = "age",
+               birth_col = "Year of Birth",
+               sample_years.1 = 2007,
+               sample_years.2 = 2012,
+               mode = "mean",
+               var_trans = 0,
+               adjust = -2,
+               x.min = 1965,
+               x.max = 2015,
+               y.min = 0,
+               y.max = 8,
+               legends = "A")
+
+    })
+
+![](README_files/figure-markdown_strict/dual_plot_fonville_single-1.png)
+
+
+You can also plot comparisons between multiple pairs of profiles.
+
+    ids.1 <- c(48,36,46) # Randomly chosen numbers
+    ids.2 <- c(19,2,23) # Randomly chosen numbers
+
+    mat <- rbind(matrix(1:3,
+                        nrow = 1, ncol = 3,
+                        byrow = TRUE))
+
+    layout(mat,
+           widths = rep(1.5, 3),
+           heights = c(1.0))
+
+    # [(id1, group1), (id2, group2)] states the comparison between the profile whose id is id1 and group is group1, and the profile whose id is id2 and group is group2.
+
+    # The following comparisons would be between three pairs of profiles: [(48, 2007), (19, 2012)], [(36, 2007), (2, 2012)], [(46, 2007), (23, 2012)].
+
+    sapply(1:length(ids.1), function(i) {
+
+      dualPlot(i = i,
+               ids.1 = ids.1,
+               ids.2 = ids.2,
+               df = transformed_df,
+               part_col = "Subject Number",
+               weight_col = "isolation_year",
+               val_col = "titer",
+               group_col = "Sample Year",
+               groups.1 = rep(2007, 3), # This determines the sample group of the first participants in the comparison pairs.
+               groups.2 = rep(2012, 3), # This determines the sample group of the second participants in the comparison pairs.
+               age_col = "age",
+               birth_col = "Year of Birth",
+               sample_years.1 = rep(2007, 3),
+               sample_years.2 = rep(2012, 3),
+               mode = "mean",
+               var_trans = 0,
+               adjust = -2,
+               x.min = 1965,
+               x.max = 2015,
+               y.min = 0,
+               y.max = 8,
+               legends = LETTERS[1:6])
+
+    })
+
+![](README_files/figure-markdown_strict/dual_plot_fonville_multiple-1.png)
+
+
+##### 3.1.3.3. Conceptual Plot
+
+Use the function `conceptualPlotAUC()`, `conceptualPlotWidth()`,
+`conceptualPlotATY()` to plot the conceptual plots of a profile, giving
+insights into the profile regarding AUC, Width, and ATY.
+
+    ids <- c(19)
+
+    mat <- rbind(matrix(1:3,
+                        nrow = 3, ncol = 1,
+                        byrow = FALSE))
+
+    layout(mat,
+           widths = 1.5,
+           heights = c(1.0, 1.0, 1.0))
+
+    # The conceptual plots of the profile whose id is 19 and goup is 2011.
+    sapply(1:length(ids), function(i) {
+
+      # auc
+      conceptualPlotAUC(i = i,
+                        ids = ids,
+                        df = transformed_df,
+                        part_col = "Subject Number",
+                        weight_col = "isolation_year",
+                        val_col = "titer",
+                        group_col = "Sample Year",
+                        groups = 2011,
+                        age_col = "age",
+                        var_trans = 0,
+                        mode = "mean",
+                        y.min = -2,
+                        y.max = 6,
+                        legends = LETTERS[1])
+
+      # width 1:40
+      conceptualPlotWidth(i = i,
+                          ids = ids,
+                          df = transformed_df,
+                          part_col = "Subject Number",
+                          weight_col = "isolation_year",
+                          val_col = "titer",
+                          group_col = "Sample Year",
+                          groups = 2011,
+                          var_trans = 0,
+                          mode = "mean",
+                          cutoff = 1,
+                          y.min = -2,
+                          y.max = 6,
+                          legends = LETTERS[2])
+
+      # aty
+      conceptualPlotATY(i = i,
+                        ids = ids,
+                        df = transformed_df,
+                        part_col = "Subject Number",
+                        weight_col = "isolation_year",
+                        val_col = "titer",
+                        group_col = "Sample Year",
+                        groups = 2011,
+                        var_trans = 0,
+                        mode = "mean",
+                        y.min = -2,
+                        y.max = 6,
+                        legends = LETTERS[3])
+
+    })
+
+![](README_files/figure-markdown_strict/conceptual_plot_fonville_single-1.png)
+
+
+You can plot conceptual plots of multiple profiles as well.
+
+    ids <- c(48,36,23) 
+
+    mat <- rbind(matrix(1:9,
+                        nrow = 3, ncol = 3,
+                        byrow = FALSE))
+
+    layout(mat,
+           widths = rep(1.5, 3),
+           heights = c(1.0, 1.0, 1.0))
+
+    # The conceptual plots of the profiles whose (id, group) are (48, 2009), (36, 2010), (23, 2011).
+    sapply(1:length(ids), function(i) {
+
+      # auc
+      conceptualPlotAUC(i = i,
+                        ids = ids,
+                        df = transformed_df,
+                        part_col = "Subject Number",
+                        weight_col = "isolation_year",
+                        val_col = "titer",
+                        group_col = "Sample Year",
+                        groups = c(2009, 2010, 2011), # This determines the sample group of the profiles.
+                        age_col = "age",
+                        var_trans = 0,
+                        mode = "mean",
+                        y.min = -2,
+                        y.max = 6,
+                        legends = LETTERS[1:3])
+
+      # width 1:40
+      conceptualPlotWidth(i = i,
+                          ids = ids,
+                          df = transformed_df,
+                          part_col = "Subject Number",
+                          weight_col = "isolation_year",
+                          val_col = "titer",
+                          group_col = "Sample Year",
+                          groups = c(2009, 2010, 2011),
+                          var_trans = 0,
+                          mode = "mean",
+                          cutoff = 1,
+                          y.min = -2,
+                          y.max = 6,
+                          legends = LETTERS[4:6])
+
+      # aty
+      conceptualPlotATY(i = i,
+                        ids = ids,
+                        df = transformed_df,
+                        part_col = "Subject Number",
+                        weight_col = "isolation_year",
+                        val_col = "titer",
+                        group_col = "Sample Year",
+                        groups = c(2009, 2010, 2011),
+                        var_trans = 0,
+                        mode = "mean",
+                        y.min = -2,
+                        y.max = 6,
+                        legends = LETTERS[7:9])
+
+    })
+
+![](README_files/figure-markdown_strict/conceptual_plot_fonville_multiple-1.png)
+
