@@ -15,11 +15,6 @@ publications:
     influenza](https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1008635).
     PLoS pathogens. 2020 Jul 23;16(7):e1008635.
 
--   Yang B, Leung NHL, Fox A, Sullivan SG, Ho F, Barr IG, Cheng SMS,
-    Wong SS, Levine MZ, Iuliano AD, Peiris M, Thompson MG, Cowling BJ.
-    Evaluating Antibody Breadth Following Various Enhanced Influenza
-    Vaccines in Older Adults. *In preparation*.
-
 ------------------------------------------------------------------------
 
 ## 1. Installation
