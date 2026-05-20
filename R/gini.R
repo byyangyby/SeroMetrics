@@ -8,7 +8,11 @@
 #' @param adj dividing factor before taking log transformation, default is 10
 #' @param adjust how to adjust titers, default is the minimum of titers - 1
 #'
-#' @return gini
+#' @return gini coefficient
+#'
+#' @examples
+#' titer <- c(3, 5, 6, 4, 2)
+#' gini(titer, input.log.trans = TRUE)
 #'
 #' @export
 gini = function(titer, input.log.trans, base = 2, adj = 10, adjust = NULL){
@@ -25,7 +29,9 @@ gini = function(titer, input.log.trans, base = 2, adj = 10, adjust = NULL){
 
   log_titer = log_titer - (adjust - 1)
 
-  rt_val = Gini(log_titer)
+  x <- sort(log_titer)
+  n <- length(x)
+  rt_val <- (2 * sum(x * seq_len(n)) - (n + 1) * sum(x)) / (n * sum(x))
 
   return(rt_val)
 

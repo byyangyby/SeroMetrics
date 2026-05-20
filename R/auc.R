@@ -11,6 +11,11 @@
 #'
 #' @return AUC
 #'
+#' @examples
+#' titer <- c(3, 5, 6, 4, 2)
+#' year  <- c(1968, 1972, 1977, 1987, 1997)
+#' auc(titer, year, input.log.trans = TRUE)
+#'
 #' @export
 auc = function(titer, distance.weight,
                input.log.trans, base = 2, adj = 10, adjust = NULL){

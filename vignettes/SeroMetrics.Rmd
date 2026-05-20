@@ -1,0 +1,150 @@
+---
+title: "Introduction to SeroMetrics"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to SeroMetrics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(SeroMetrics)
+```
+
+## Overview
+
+SeroMetrics quantifies antibody landscapes — the profile of antibody titers a
+person has against a panel of virus strains — using a set of summary metrics.
+Each metric captures a different aspect of the landscape shape:
+
+| Metric | Function | Captures |
+|---|---|---|
+| GMT | `gmt_data()` | Magnitude (geometric mean) |
+| Max titer | `max_titer_data()` | Peak response |
+| AUC | `auc_data()` | Breadth × magnitude |
+| ATY | `aty_data()` | Average response year (temporal center) |
+| Width | `width_data()` | Span of strains above a threshold |
+| Proportion | `prop_data()` | Fraction of strains above a threshold |
+| Protected proportion | `prot_prop_data()` | Fraction weighted by protection levels |
+| Gini coefficient | `gini_data()` | Inequality of titer distribution |
+| Skewness | `skewness_data()` | Asymmetry of the landscape |
+| Kurtosis | `kurtosis_data()` | Peakedness / tailedness |
+
+---
+
+## Data Format
+
+Each function expects a **long-format** data frame with at minimum:
+
+- **`part_col`** — participant ID (one row per participant–strain pair)
+- **`val_col`** — titer value (log-transformed by default; set `var_trans = FALSE` for raw titers)
+- **`weight_col`** — strain distance (e.g. isolation year) — required for AUC, ATY, Width, Skewness, Kurtosis
+- **`group_col`** — sample group (e.g. sample year) — use when a participant has multiple serum samples
+
+---
+
+## Example 1 — Fonville Dataset (longitudinal)
+
+The `Fonville` dataset contains longitudinal HI titers. Participants were sampled
+across multiple years, so use `group_col = "Sample Year"`.
+
+```{r fonville-load}
+data(Fonville)
+head(Fonville[, c("Subject Number", "Sample Year", "isolation_year", "strain", "titer")], 6)
+```
+
+### Calculate all metrics at once with `summarise_landscape()`
+
+```{r fonville-overall}
+result <- summarise_landscape(
+  Fonville,
+  part_col        = "Subject Number",
+  weight_col      = "isolation_year",
+  val_col         = "titer",
+  group_col       = "Sample Year",
+  var_trans       = TRUE,
+  required_metrics = c("GMT", "AUC", "ATY", "gini_coefficient",
+                       "Kurtosis", "Skewness", "Prop2", "Width2")
+)
+head(result, 6)
+```
+
+### Calculate metrics individually
+
+```{r fonville-individual}
+gmt_res  <- gmt_data(Fonville,  part_col = "Subject Number", val_col = "titer",
+                    group_col = "Sample Year")
+auc_res  <- auc_data(Fonville,  part_col = "Subject Number",
+                    weight_col = "isolation_year", val_col = "titer",
+                    group_col = "Sample Year")
+gini_res <- gini_data(Fonville, part_col = "Subject Number", val_col = "titer",
+                     group_col = "Sample Year")
+
+head(gmt_res, 4)
+head(auc_res, 4)
+```
+
+---
+
+## Example 2 — Lessler Dataset (duplicate strain years)
+
+In the `Lessler` dataset each participant (`id`) has titers against a panel
+of strains, and several strains share the same isolation year. Use
+`mode = "mean"` to aggregate titers with duplicate isolation years before
+computing distance-weighted metrics.
+
+```{r lessler-load}
+data(Lessler)
+head(Lessler[, c("id", "isolation_year", "strain", "titer")], 6)
+```
+
+```{r lessler-overall}
+result2 <- summarise_landscape(
+  Lessler,
+  part_col        = "id",
+  weight_col      = "isolation_year",
+  val_col         = "titer",
+  var_trans       = TRUE,
+  mode            = "mean",
+  required_metrics = c("GMT", "AUC", "gini_coefficient",
+                       "Kurtosis", "Skewness", "Prop2", "Width2")
+)
+head(result2, 6)
+```
+
+---
+
+## Core metric functions
+
+Each `*Data()` function wraps a lower-level scalar function of the same root
+name that operates directly on vectors. These are useful for custom workflows:
+
+```{r core-functions}
+titer <- c(3, 5, 6, 4, 2)   # log2-transformed titers
+year  <- c(1968, 1972, 1977, 1987, 1997)
+
+gmt(titer)
+auc(titer, year, input.log.trans = TRUE)
+aty(titer, year, input.log.trans = TRUE)
+prop(titer, threshold = 4)
+```
+
+---
+
+## Key parameters
+
+| Parameter | Default | Meaning |
+|---|---|---|
+| `var_trans` | `TRUE` | Input titers are already log-transformed |
+| `output_trans` | `TRUE` | Return log-transformed output (GMT, Max titer) |
+| `base` | `2` | Log base for transformation |
+| `adj` | `10` | Divisor before log transform (raw titer → log2(titer/10)) |
+| `mode` | `NULL` | How to resolve duplicate `weight_col` values: `"mean"`, `"max"`, `"min"` |
+| `adjust` | `NULL` | Titer shift before area calculations; defaults to min titer |

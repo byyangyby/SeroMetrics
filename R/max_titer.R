@@ -10,6 +10,10 @@
 #'        TRUE = log transformed, FALSE = not log transformed
 #' @return max titer
 #'
+#' @examples
+#' titer <- c(3, 5, 6, 4, 2)
+#' max_titer(titer)
+#'
 #' @export
 max_titer = function(titer, input.log.trans = TRUE, base = 2, adj = 10, output.log.trans = TRUE){
 

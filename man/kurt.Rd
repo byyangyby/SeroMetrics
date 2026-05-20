@@ -33,3 +33,9 @@ kurtosis
 \description{
 Calculate the kurtosis of the titers
 }
+\examples{
+titer <- c(3, 5, 6, 4, 2)
+year  <- c(1968, 1972, 1977, 1987, 1997)
+kurt(titer, year, input.log.trans = TRUE)
+
+}

@@ -19,8 +19,13 @@ TRUE = log transformed, FALSE = not log transformed}
 \item{adjust}{how to adjust titers, default is the minimum of titers - 1}
 }
 \value{
-gini
+gini coefficient
 }
 \description{
 Calculate the gini coefficient of the titers
+}
+\examples{
+titer <- c(3, 5, 6, 4, 2)
+gini(titer, input.log.trans = TRUE)
+
 }

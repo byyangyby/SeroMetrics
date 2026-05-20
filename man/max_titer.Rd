@@ -31,3 +31,8 @@ max titer
 \description{
 Calculate maximum titer against a panel of viruses
 }
+\examples{
+titer <- c(3, 5, 6, 4, 2)
+max_titer(titer)
+
+}

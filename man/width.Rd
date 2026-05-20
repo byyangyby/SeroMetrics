@@ -30,12 +30,19 @@ TRUE = log transformed, FALSE = not log transformed}
 
 \item{base}{log base used to calculate the log transformed value, default is 2}
 
-\item{adj}{dividing factor before taking log transformation, default is 10
-#' @param adjust how to adjust titers, default is the minimum of titers}
+\item{adj}{dividing factor before taking log transformation, default is 10}
+
+\item{adjust}{how to adjust titers, default is the minimum of titers}
 }
 \value{
 width
 }
 \description{
 Calculate the width of the titers
+}
+\examples{
+titer <- c(3, 5, 6, 4, 2)
+year  <- c(1968, 1972, 1977, 1987, 1997)
+width(titer, year)
+
 }

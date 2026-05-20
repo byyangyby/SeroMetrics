@@ -179,12 +179,12 @@ and since all virus strains have different isolation years, the
 
 #### 3.1.1. Calculate multiple metrics at once
 
-Using `overallData()` function to simultaneously calculate multiple
+Using `summarise_landscape()` function to simultaneously calculate multiple
 metrics specified in the `required_metrics` argument. The output is a
 matrix with each individual’s antibody profile, in this case for each
 participant.
 
-    overallResult <- overallData(data = lessler, 
+    overallResult <- summarise_landscape(data = lessler, 
                                  part_col = "id", # unique id of the participant
                                  weight_col = "isolation_year", # specify the column name for weights.
                                  val_col = "titers", # specify the column name for the titer value
@@ -229,7 +229,7 @@ values for the chosen metric, which can be manually integrated into an
 overall matrix.
 
         # average titer year
-        atyResult <- atyData(
+        atyResult <- aty_data(
           data = lessler,
           part_col = c("id"),
           weight_col = c("isolation_year"), 
@@ -238,7 +238,7 @@ overall matrix.
         )
         
         # area under the curve
-        aucResult <- aucData(
+        aucResult <- auc_data(
           data = lessler,
           part_col = c("id"),
           weight_col = c("isolation_year"), 
@@ -247,7 +247,7 @@ overall matrix.
         )
 
         # Gini coefficient   
-        giniResult <- giniData(
+        giniResult <- gini_data(
           data = lessler,
           part_col = c("id"), 
           val_col = c("titers"), 
@@ -255,7 +255,7 @@ overall matrix.
         )
         
          # Geometric mean titer   
-        gmtResult <- gmtData(
+        gmtResult <- gmt_data(
           data = lessler,
           part_col = c("id"), 
           val_col = c("titers"), 
@@ -264,7 +264,7 @@ overall matrix.
         )
         
         # Kurtosis
-        kurtosisResult <- kurtosisData(
+        kurtosisResult <- kurtosis_data(
           data = lessler,
           part_col = c("id"), 
           weight_col = c("isolation_year"), 
@@ -273,7 +273,7 @@ overall matrix.
         )
         
         # Maximum titer
-        max_titerResult <- max_titerData(
+        max_titerResult <- max_titer_data(
           data = lessler,
           part_col = c("id"), 
           val_col = c("titers"), 
@@ -282,7 +282,7 @@ overall matrix.
         )
         
         # The proportion of titers above 40
-        propResult2 <- propData(
+        propResult2 <- prop_data(
           data = lessler,
           part_col = c("id"), 
           val_col = c("titers"), 
@@ -293,7 +293,7 @@ overall matrix.
         )
         
         # The proportion of titers above 80
-        propResult3 <-  propData(
+        propResult3 <-  prop_data(
           data = lessler,
           part_col = c("id"), 
           val_col = c("titers"), 
@@ -304,14 +304,14 @@ overall matrix.
         )
         
         # Using default weight vector
-        prot_propResult <- prot_propData(
+        prot_propResult <- prot_prop_data(
           data = lessler,
           part_col = c("id"), 
           val_col = c("titers")
         )
         
         # Skewness
-        skewnessResult <- skewnessData(
+        skewnessResult <- skewness_data(
           data = lessler,
           part_col = c("id"), 
           weight_col = c("isolation_year"), 
@@ -320,7 +320,7 @@ overall matrix.
         )
         
          # The width of titers above 40
-        widthResult <- widthData(
+        widthResult <- width_data(
           data = lessler,
           part_col = c("id"), 
           weight_col = c("isolation_year"), 
@@ -417,12 +417,12 @@ table to a long table) should be done first.
 
 #### 3.2.1. Calculate multiple metrics at once
 
-Using `overallData()` function to simultaneously calculate multiple
+Using `summarise_landscape()` function to simultaneously calculate multiple
 metrics specified in the `required_metrics` argument. The output is a
 matrix with each individual’s antibody profile, in this case for each
 participant.
 
-     overallResultFonville <- overallData(
+     overallResultFonville <- summarise_landscape(
        transformed_df, 
        part_col = "Subject Number", 
        weight_col = "isolation_year", 
@@ -454,7 +454,7 @@ participant.
 Similarly, you can also calculate a single metric using the
 corresponding function in the package.
 
-        atyResult <- atyData(
+        atyResult <- aty_data(
           transformed_df,
           part_col = c("Subject Number"),
           weight_col = c("isolation_year"), 
@@ -464,7 +464,7 @@ corresponding function in the package.
           aty_col = "aty"
         )
 
-        aucResult <- aucData(
+        aucResult <- auc_data(
           transformed_df,
           part_col = c("Subject Number"),
           weight_col = c("isolation_year"), 
@@ -475,7 +475,7 @@ corresponding function in the package.
           auc_col = "auc"
         )
         
-        giniResult <- giniData(
+        giniResult <- gini_data(
           transformed_df,
           part_col = c("Subject Number"), 
           val_col = c("titer"), 
@@ -483,7 +483,7 @@ corresponding function in the package.
           var_trans = 0
         )
         
-        gmtResult <- gmtData(
+        gmtResult <- gmt_data(
           transformed_df,
           part_col = c("Subject Number"), 
           val_col = c("titer"), 
@@ -492,7 +492,7 @@ corresponding function in the package.
           output_trans = 1
         )
         
-        kurtosisResult <- kurtosisData(
+        kurtosisResult <- kurtosis_data(
           transformed_df,
           part_col = c("Subject Number"),
           weight_col = c("isolation_year"), 
@@ -501,7 +501,7 @@ corresponding function in the package.
           var_trans = 0
         )
         
-        max_titerResult <-max_titerData(
+        max_titerResult <-max_titer_data(
           transformed_df,
           part_col = c("Subject Number"), 
           val_col = c("titer"),
@@ -511,7 +511,7 @@ corresponding function in the package.
         )
         
         #the proportion of titers above 40
-        propResult <- propData(
+        propResult <- prop_data(
           transformed_df,
           part_col = c("Subject Number"),
           val_col = c("titer"), 
@@ -521,7 +521,7 @@ corresponding function in the package.
           threshold = 2
         ) 
         
-        prot_propResult <- prot_propData(
+        prot_propResult <- prot_prop_data(
           transformed_df,
           part_col = c("Subject Number"),
           val_col = c("titer"),
@@ -530,7 +530,7 @@ corresponding function in the package.
           weight = c(0,0.3,0.5,0.8,0.9)
         )
         
-        skewnessResult <- skewnessData(
+        skewnessResult <- skewness_data(
           transformed_df,
           part_col = c("Subject Number"),
           weight_col = c("isolation_year"), 
@@ -540,7 +540,7 @@ corresponding function in the package.
         )
         
         #the width of titers above 40
-        widthResult2 <- widthData(
+        widthResult2 <- width_data(
           transformed_df,
           part_col = c("Subject Number"),
           weight_col = c("isolation_year"), 
@@ -554,7 +554,7 @@ corresponding function in the package.
         ) 
         
         #the width of titers above 80
-        widthResult3 <- widthData(
+        widthResult3 <- width_data(
           transformed_df,
           part_col = c("Subject Number"),
           weight_col = c("isolation_year"), 

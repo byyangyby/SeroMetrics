@@ -1,2 +1,11 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^README\.Rmd$
+^README\.html$
+^Examples\.Rmd$
+^data-raw$
+^doc$
+^Meta$
+^LICENSE$
+^\.claude$
+^docs$

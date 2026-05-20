@@ -10,6 +10,12 @@
 #' @param adjust how to adjust titers, default is the minimum of titers
 #'
 #' @return skewness
+#'
+#' @examples
+#' titer <- c(3, 5, 6, 4, 2)
+#' year  <- c(1968, 1972, 1977, 1987, 1997)
+#' skew(titer, year, input.log.trans = TRUE)
+#'
 #' @export
 skew = function(titer, distance.weight, input.log.trans, base = 2, adj = 10, adjust = NULL){
 
@@ -20,20 +26,18 @@ skew = function(titer, distance.weight, input.log.trans, base = 2, adj = 10, adj
   }
 
   if(is.null(adjust)){
-    adjust = min(log_titer)
+    adjust = min(log_titer, na.rm = TRUE)
   }
 
   log_titer_transf = log_titer - adjust
 
-  dist_df = lapply(seq_along(log_titer), function(i){
-
-    rep(distance.weight[i], log_titer_transf[i])
-
-  }) %>%
-    do.call(
-      "c", .
-    ) %>%
-    unlist
+  dist_df <- lapply(seq_along(log_titer), function(i) {
+    t <- round(log_titer_transf[i])
+    if (is.na(t) || t <= 0L) return(numeric(0))
+    rep(distance.weight[i], t)
+  }) |>
+    (\(x) do.call("c", x))() |>
+    unlist()
 
   rt_val = skewness(dist_df, na.rm = TRUE)
 

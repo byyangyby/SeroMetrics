@@ -25,3 +25,8 @@ GMT
 \description{
 Calculate geometric mean titer against a panel of viruses
 }
+\examples{
+titer <- c(3, 5, 6, 4, 2)
+gmt(titer)
+
+}

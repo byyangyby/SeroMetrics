@@ -32,8 +32,13 @@ TRUE = percentage transformed, FALSE = not percentage transformed}
 \item{adj}{dividing factor before taking log transformation, default is 10}
 }
 \value{
-prot_prop
+protected proportion
 }
 \description{
 Calculate the proportion of titers weighted by protection levels
+}
+\examples{
+titer <- c(3, 5, 6, 4, 2)
+prot_prop(titer)
+
 }

@@ -12,8 +12,15 @@ uniq(data, columns = NULL)
 \item{columns}{columns to select}
 }
 \value{
-uniq
+a data frame of unique rows for the selected columns
 }
 \description{
 Select the samples according to the requirements
+}
+\examples{
+df <- data.frame(id = c(1, 1, 2), year = c(2000, 2000, 2001),
+                 titer = c(5, 5, 6))
+uniq(df)
+uniq(df, columns = c("id", "year"))
+
 }

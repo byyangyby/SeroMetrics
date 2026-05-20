@@ -14,9 +14,9 @@ prop(
 )
 }
 \arguments{
-\item{titer}{titer value#'}
+\item{titer}{a vector of titer values}
 
-\item{threshold}{the titers above which are counted, defalut is 2}
+\item{threshold}{the titers above which are counted, default is 2}
 
 \item{threshold.log.trans}{whether the threshold value is log transformed, default is TRUE
 TRUE = log transformed, FALSE = not log transformed}
@@ -29,8 +29,13 @@ TRUE = log transformed, FALSE = not log transformed}
 \item{adj}{dividing factor before taking log transformation, default is 10}
 }
 \value{
-PROP
+proportion of titers above threshold
 }
 \description{
 Calculate proportion of titers over a threshold
+}
+\examples{
+titer <- c(3, 5, 6, 4, 2)
+prop(titer, threshold = 4)
+
 }

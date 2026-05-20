@@ -9,9 +9,15 @@
 #'        TRUE = log transformed, FALSE = not log transformed
 #' @param base log base used to calculate the log transformed value, default is 2
 #' @param adj dividing factor before taking log transformation, default is 10
-#' #' @param adjust how to adjust titers, default is the minimum of titers
+#' @param adjust how to adjust titers, default is the minimum of titers
 #'
 #' @return width
+#'
+#' @examples
+#' titer <- c(3, 5, 6, 4, 2)
+#' year  <- c(1968, 1972, 1977, 1987, 1997)
+#' width(titer, year)
+#'
 #' @export
 width = function(titer, distance.weight, threshold = 2, threshold_trans = TRUE, input.log.trans = TRUE, base = 2, adj = 10, adjust = NULL){
 

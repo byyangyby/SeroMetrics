@@ -1,7 +1,7 @@
 #' Calculate proportion of titers over a threshold
 #'
-#' @param titer titer value#'
-#' @param threshold the titers above which are counted, defalut is 2
+#' @param titer a vector of titer values
+#' @param threshold the titers above which are counted, default is 2
 #' @param threshold.log.trans whether the threshold value is log transformed, default is TRUE
 #'        TRUE = log transformed, FALSE = not log transformed
 #' @param input.log.trans whether the input titer value is log transformed, default is TRUE
@@ -9,7 +9,12 @@
 #' @param base log base used to calculate the log transformed value, default is 2
 #' @param adj dividing factor before taking log transformation, default is 10
 
-#' @return PROP
+#' @return proportion of titers above threshold
+#'
+#' @examples
+#' titer <- c(3, 5, 6, 4, 2)
+#' prop(titer, threshold = 4)
+#'
 #' @export
 prop = function(titer, threshold = 2, threshold.log.trans = TRUE, input.log.trans = TRUE, base = 2, adj = 10){
 
