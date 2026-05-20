@@ -19,10 +19,53 @@
 #' @param adj dividing factor before taking log transformation, default is 10
 #' @param mode how to calculate values if weight_col is repeated, default is NULL
 #' @param adjust how to adjust titers, default is the minimum of titers
-#' @param required_metrics a list of metrics that required by the user. Note that when inputting proportion and width, it should be in the format of "Prop"/"Width" followed by a log_transformed threshold, eg. "Prop2"/"Width2". The other metrics should be exactly "ATY","AUC","gini_coefficient","GMT","Kurtosis","Max_titer","Prot_prop", or "Skewness", i.e. inputting "aty","gini", etc. is considered invalid.
+#' @param required_metrics character vector of metrics to compute.
+#'        Valid values (case-sensitive): `"ATY"`, `"AUC"`, `"gini_coefficient"`,
+#'        `"GMT"`, `"Kurtosis"`, `"Max_titer"`, `"Prot_prop"`, `"Skewness"`,
+#'        plus the threshold-encoded forms `"Prop<N>"` and `"Width<N>"`
+#'        (e.g. `"Prop2"`, `"Width4"`). The integer `N` after `"Prop"` /
+#'        `"Width"` is passed to the underlying function as `threshold = N`
+#'        with `threshold_trans = TRUE` — see Details for the exact cutoff
+#'        each value of `N` selects.
 #' @param col_names the column names of the output metrics, default is required_metrics
 #'
 #' @return a data frame containing all metrics
+#'
+#' @details
+#' **Threshold conventions for `"Prop<N>"` and `"Width<N>"`**
+#'
+#' `"Prop<N>"` calls `prop_data(threshold = N, threshold_trans = TRUE)`.
+#' With the package defaults (`adj = 10`, `base = 2`), the integer `N` is a
+#' log2 cutoff, so:
+#'
+#' | `required_metrics` | linear titer cutoff (`adj * base^N`) |
+#' |---|---|
+#' | `"Prop0"` | titer >= 10 |
+#' | `"Prop2"` | titer >= 40 |
+#' | `"Prop3"` | titer >= 80 |
+#'
+#' `"Width<N>"` calls `width_data(threshold = N, threshold_trans = TRUE)`.
+#' `width()` internally shifts `log_titer` by `adjust` and adds 1 to the
+#' threshold (`z = threshold + 1`) before comparing, so its effective
+#' cutoff depends on the `adjust` argument:
+#'
+#' | `required_metrics` | `adjust = 0` (or default) | `adjust = -2` |
+#' |---|---|---|
+#' | `"Width2"` | titer >= 80 | titer >= 20 |
+#' | `"Width4"` | titer >= 320 | titer >= 80 |
+#' | `"Width5"` | titer >= 640 | titer >= 160 |
+#'
+#' General rule: `"Width<N>"` checks `linear titer >= adj * base^(N + 1 + adjust)`.
+#' So if you want `"Width<N>"` to match `"Prop<N>"` numerically, use
+#' `adjust = -1`. The defaults are deliberately *not* aligned because the
+#' shift is what gives `width()` its breadth-relative-to-the-floor
+#' interpretation.
+#'
+#' `col_names` is just a labeller for the output columns — it has no effect
+#' on the math. Make sure your labels match the cutoffs above so you don't
+#' confuse yourself later (e.g. with `adjust = -2`, `"Width2"` measures
+#' the breadth of titers >= 20, so a column label like `"width_20"` is
+#' more accurate than `"width_10"`).
 #'
 #' @examples
 #' \donttest{

@@ -43,7 +43,7 @@ Or the development version from GitHub:
 
 ```r
 # install.packages("devtools")
-devtools::install_github("bingyiyang/SeroMetrics")
+devtools::install_github("byyangyby/SeroMetrics")
 ```
 
 ## Available metrics
@@ -135,9 +135,9 @@ head(auc_res)
 ## Example 2 — Lessler et al. 2012, *PLOS Pathogens*
 
 [Lessler et al., 2012](https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1002802)
-collected one serum sample per participant, so no `group_col` is needed. Several
-strains can share the same isolation year, so set `mode = "mean"` to aggregate
-titers with duplicate isolation years.
+collected one serum sample per participant against a panel of 9 H3N2 strains
+spanning 1968–2008, so no `group_col` is needed. Titers (`titer`) are already
+log-transformed, so leave `var_trans = TRUE`.
 
 ### Calculate multiple metrics at once
 
@@ -148,7 +148,6 @@ summarise_landscape(
   weight_col       = "isolation_year",
   val_col          = "titer",
   var_trans        = TRUE,
-  mode             = "mean",
   required_metrics = c("GMT", "AUC", "gini_coefficient",
                        "Kurtosis", "Skewness", "Prop2", "Width2")
 ) |>
@@ -159,7 +158,28 @@ summarise_landscape(
 
 ```{r lessler-individual}
 auc_data(Lessler, part_col = "id", weight_col = "isolation_year",
-        val_col = "titer", mode = "mean") |>
+        val_col = "titer") |>
+  head()
+```
+
+### Aggregating duplicate isolation years with `mode`
+
+If your dataset has multiple titers against different strains that share an
+isolation year (as in `Fonville`, where most participant-year combinations
+have several strains), set `mode = "mean"`, `"max"`, or `"min"` to aggregate
+them before computing distance-weighted metrics (AUC, ATY, Width, Skewness,
+Kurtosis):
+
+```{r fonville-mode-mean}
+summarise_landscape(
+  Fonville,
+  part_col         = "Subject Number",
+  weight_col       = "isolation_year",
+  val_col          = "titer",
+  group_col        = "Sample Year",
+  mode             = "mean",
+  required_metrics = c("AUC", "ATY", "Skewness", "Kurtosis")
+) |>
   head()
 ```
 

@@ -33,23 +33,22 @@
 #' Lessler et al. haemagglutination inhibition titer data
 #'
 #' HI titer measurements from Lessler et al. (2012). Each participant
-#' (\code{id}) has titers against a panel of influenza strains. Several
-#' strains share the same isolation year, so use \code{mode = "mean"}
-#' (or "max"/"min") to aggregate duplicate isolation years when computing
-#' distance-weighted metrics. Data are in long format with one row per
+#' (\code{id}) was tested once against a panel of 9 H3N2 strains spanning
+#' 1968-2008, so each (id, isolation_year) pair appears exactly once and
+#' no \code{group_col} or \code{mode} aggregation is needed. Titers are
+#' already log-transformed. Data are in long format with one row per
 #' participant-strain combination.
 #'
-#' @format A data frame with 9 columns:
+#' @format A data frame with 7 columns:
 #' \describe{
+#'   \item{id}{Participant identifier (numeric).}
 #'   \item{age}{Participant age in years (numeric).}
-#'   \item{is.vac}{Vaccination status indicator.}
-#'   \item{shift.age}{Age-related covariate from the source dataset (numeric).}
-#'   \item{titers}{Titer summary column from the source dataset.}
-#'   \item{neut.against}{Strain against which neutralisation was measured.}
-#'   \item{id}{Participant identifier.}
-#'   \item{strain}{Influenza strain name (character).}
-#'   \item{titer}{Haemagglutination inhibition titer (numeric).}
+#'   \item{is.vac}{Vaccination status indicator ("1" or NA).}
+#'   \item{shift.age}{Age relative to the antigenic-shift year used in the
+#'     source publication (numeric).}
+#'   \item{strain}{Influenza strain name (character), e.g. "A/HK/1968(H3N2)".}
 #'   \item{isolation_year}{Year the test strain was isolated (numeric).}
+#'   \item{titer}{Log-transformed haemagglutination inhibition titer (numeric).}
 #' }
 #'
 #' @source Lessler et al. (2012) Evidence for antigenic seniority in influenza

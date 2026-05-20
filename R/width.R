@@ -11,7 +11,7 @@
 #'        TRUE = log transformed, FALSE = not log transformed
 #' @param base log base used to calculate the log transformed value, default is 2
 #' @param adj dividing factor before taking log transformation, default is 10
-#' @param adjust how to adjust titers, default is min(min(log_titer), 0)
+#' @param adjust how to adjust titers, default is the minimum of titers
 #'
 #' @return width
 #'
@@ -22,13 +22,26 @@
 #' threshold, the crossing location is found by linear interpolation between
 #' the two `distance.weight` values.
 #'
-#' Threshold semantics mirror `prop()`: with the defaults, `threshold = 2`
-#' is the same as "titer >= 40". Setting `threshold_trans = FALSE` lets you
-#' pass a linear titer directly (e.g. `threshold = 40`).
+#' **Effective threshold.** Internally `log_titer` is shifted by `adjust`
+#' (`log_titer - adjust`) and the threshold is incremented by 1
+#' (`z = threshold + 1`) before the comparison. With `threshold_trans = TRUE`,
+#' the cutoff that gets counted as "covered" is therefore:
 #'
-#' Note: internally `log_titer` is shifted by `adjust` before the comparison,
-#' so passing a non-default `adjust` shifts the effective threshold by
-#' `adjust` log units relative to the documented value above.
+#' \deqn{linear\ titer \geq adj \times base^{(threshold + 1 + adjust)}}
+#'
+#' For the package defaults (`adj = 10`, `base = 2`):
+#'
+#' | `threshold` | `adjust = 0` | `adjust = -1` | `adjust = -2` |
+#' |---|---|---|---|
+#' | 0 | titer >= 20  | titer >= 10 | titer >= 5  |
+#' | 2 | titer >= 80  | titer >= 40 | titer >= 20 |
+#' | 4 | titer >= 320 | titer >= 160 | titer >= 80 |
+#'
+#' The shift makes the cutoff *relative* to the participant's minimum titer
+#' when `adjust` is left at its default. Pass an explicit `adjust` to align
+#' the cutoff with a fixed linear titer across participants
+#' (e.g. `adjust = -1` makes `width(threshold = N)` and `prop(threshold = N)`
+#' match numerically).
 #'
 #' @examples
 #' titer <- c(3, 5, 6, 4, 2)
@@ -50,13 +63,15 @@ width = function(titer, distance.weight, threshold = 2, threshold_trans = TRUE, 
     z = log(threshold/adj, base)
   }
 
-  if (is.null(adjust)) {
-    adjust <- min(min(log_titer), 0)
+  if(is.null(adjust)){
+    adjust = min(log_titer)
   }
 
   len <- length(distance.weight)
 
   log_titer = log_titer - adjust
+
+  z = z + 1
 
   y.1 <- log_titer[1:(len-1)]
   y.2 <- log_titer[2:len]

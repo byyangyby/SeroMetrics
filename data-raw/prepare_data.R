@@ -6,7 +6,10 @@ library(dplyr)
 library(tidyr)
 library(stringr)
 
-transform <- function(df) {
+## Fonville is in wide format: columns 1-6 are sample metadata and columns
+## 7+ are one column per strain. Pivot to long, clean the titer cell
+## conventions, and extract the isolation year from the strain name.
+transform_fonville <- function(df) {
   df |>
     pivot_longer(
       cols = 7:ncol(df),
@@ -48,7 +51,23 @@ transform <- function(df) {
     filter(!is.na(titer))
 }
 
-Fonville <- read_excel("data-raw/Fonville.xlsx") |> transform()
-Lessler  <- read_excel("data-raw/Lessler.xlsx")  |> transform()
+## Lessler is already in long format: each row is one (id, strain) pair with
+## a single (log-transformed) titer in the `titers` column. The strain name
+## sits in `neut.against`, formatted like "1 A/HK/1968(H3N2)" — a leading
+## index, then the strain string with the isolation year embedded.
+transform_lessler <- function(df) {
+  df |>
+    mutate(
+      strain = str_remove(neut.against, "^\\d+\\s+"),
+      isolation_year = as.numeric(str_extract(neut.against, "\\d{4}")),
+      titer = titers,
+      is.vac = na_if(is.vac, "NA")
+    ) |>
+    select(id, age, is.vac, shift.age, strain, isolation_year, titer) |>
+    filter(!is.na(titer))
+}
+
+Fonville <- read_excel("data-raw/Fonville.xlsx") |> transform_fonville()
+Lessler  <- read_excel("data-raw/Lessler.xlsx")  |> transform_lessler()
 
 usethis::use_data(Fonville, Lessler, overwrite = TRUE)

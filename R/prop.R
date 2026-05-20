@@ -17,10 +17,25 @@
 #'
 #' @details
 #' Returns the fraction of (non-missing) titers that are greater than or
-#' equal to `threshold`. The threshold convention is shared with `width()`:
-#' both functions interpret `threshold = N` as "linear titer >= adj * base^N"
-#' by default, so the same numeric value of `threshold` selects the same
-#' cutoff in both metrics.
+#' equal to `threshold`. Unlike `width()`, `prop()` does **not** apply
+#' any `adjust`-based shift, so the effective cutoff is fixed:
+#'
+#' \deqn{linear\ titer \geq adj \times base^{threshold}}
+#'
+#' For the package defaults (`adj = 10`, `base = 2`):
+#'
+#' | `threshold` | linear cutoff |
+#' |---|---|
+#' | 0 | titer >= 10 |
+#' | 2 | titer >= 40 |
+#' | 3 | titer >= 80 |
+#'
+#' To pass a linear titer directly, set `threshold.log.trans = FALSE`
+#' (e.g. `prop(titer, threshold = 40, threshold.log.trans = FALSE)`).
+#'
+#' Note: `width()` uses a related-but-different convention. For
+#' `width(threshold = N)` to count the same titers as `prop(threshold = N)`,
+#' pass `adjust = -1` to `width()`. See `?width` for the full table.
 #'
 #' @examples
 #' titer <- c(3, 5, 6, 4, 2)
