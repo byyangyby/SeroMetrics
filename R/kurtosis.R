@@ -7,7 +7,7 @@
 #'        TRUE = log transformed, FALSE = not log transformed
 #' @param base log base used to calculate the log transformed value, default is 2
 #' @param adj dividing factor before taking log transformation, default is 10
-#' @param adjust how to adjust titers, default is the minimum of titers
+#' @param adjust how to adjust titers, default is min(min(log_titer), 0)
 #'
 #' @return kurtosis
 #'
@@ -25,19 +25,15 @@ kurt = function(titer, distance.weight, input.log.trans, base = 2, adj = 10, adj
     log_titer = log(titer/adj, base)
   }
 
-  if(is.null(adjust)){
-    adjust = min(log_titer, na.rm = TRUE)
+  if (is.null(adjust)) {
+    adjust <- min(min(log_titer), 0)
   }
 
   log_titer_transf = log_titer - adjust
 
-  dist_df <- lapply(seq_along(log_titer), function(i) {
-    t <- round(log_titer_transf[i])
-    if (is.na(t) || t <= 0L) return(numeric(0))
-    rep(distance.weight[i], t)
-  }) |>
-    (\(x) do.call("c", x))() |>
-    unlist()
+  dist_df <- unlist(lapply(seq_along(log_titer), function(i) {
+    rep(distance.weight[i], log_titer_transf[i])
+  }))
 
   rt_val = kurtosis(dist_df, na.rm = TRUE)
 

@@ -6,7 +6,7 @@
 #'        TRUE = log transformed, FALSE = not log transformed
 #' @param base log base used to calculate the log transformed value, default is 2
 #' @param adj dividing factor before taking log transformation, default is 10
-#' @param adjust how to adjust titers, default is the minimum of titers - 1
+#' @param adjust how to adjust titers, default is min(min(log_titer), 0)
 #'
 #' @return gini coefficient
 #'
@@ -23,11 +23,11 @@ gini = function(titer, input.log.trans, base = 2, adj = 10, adjust = NULL){
     log_titer = log(titer/adj, base)
   }
 
-  if(is.null(adjust)){
-    adjust = min(log_titer) - 1
+  if (is.null(adjust)) {
+    adjust <- min(min(log_titer), 0)
   }
 
-  log_titer = log_titer - (adjust - 1)
+  log_titer = log_titer - adjust
 
   x <- sort(log_titer)
   n <- length(x)

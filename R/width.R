@@ -1,17 +1,34 @@
 #' Calculate the width of the titers
 #'
-#' @param titer titer value
-#' @param distance.weight a vector the distance used to sorting titers. Eg. year of isolation or amino acid distance
-#' @param threshold the titers above which are counted, default is 2
+#' @param titer a vector of titer values
+#' @param distance.weight a vector of the distance used to sorting titers. Eg. year of isolation or amino acid distance
+#' @param threshold titer cutoff above which a `distance.weight` value is considered "covered". Default is 2.
+#'        Uses the same convention as `prop()`: with the defaults (`threshold_trans = TRUE`, `adj = 10`, `base = 2`),
+#'        `threshold = 2` means a linear titer of `10 * 2^2 = 40`. Set `threshold_trans = FALSE` to pass a raw titer.
 #' @param threshold_trans whether the threshold value is log transformed, default is TRUE
 #'        TRUE = log transformed, FALSE = not log transformed
 #' @param input.log.trans whether the input titer value is log transformed, default is TRUE
 #'        TRUE = log transformed, FALSE = not log transformed
 #' @param base log base used to calculate the log transformed value, default is 2
 #' @param adj dividing factor before taking log transformation, default is 10
-#' @param adjust how to adjust titers, default is the minimum of titers
+#' @param adjust how to adjust titers, default is min(min(log_titer), 0)
 #'
 #' @return width
+#'
+#' @details
+#' Width measures the breadth of the antibody response: the fraction of the
+#' `distance.weight` axis (e.g. year-of-isolation range) over which the titer
+#' exceeds `threshold`. For consecutive points where the titer crosses the
+#' threshold, the crossing location is found by linear interpolation between
+#' the two `distance.weight` values.
+#'
+#' Threshold semantics mirror `prop()`: with the defaults, `threshold = 2`
+#' is the same as "titer >= 40". Setting `threshold_trans = FALSE` lets you
+#' pass a linear titer directly (e.g. `threshold = 40`).
+#'
+#' Note: internally `log_titer` is shifted by `adjust` before the comparison,
+#' so passing a non-default `adjust` shifts the effective threshold by
+#' `adjust` log units relative to the documented value above.
 #'
 #' @examples
 #' titer <- c(3, 5, 6, 4, 2)
@@ -33,15 +50,13 @@ width = function(titer, distance.weight, threshold = 2, threshold_trans = TRUE, 
     z = log(threshold/adj, base)
   }
 
-  if(is.null(adjust)){
-    adjust = min(log_titer)
+  if (is.null(adjust)) {
+    adjust <- min(min(log_titer), 0)
   }
 
   len <- length(distance.weight)
 
   log_titer = log_titer - adjust
-
-  z = z + 1
 
   y.1 <- log_titer[1:(len-1)]
   y.2 <- log_titer[2:len]
