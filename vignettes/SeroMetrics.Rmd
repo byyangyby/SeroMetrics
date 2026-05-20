@@ -93,25 +93,22 @@ head(auc_res, 4)
 
 ---
 
-## Example 2 — Lessler Dataset (duplicate strain years)
+## Example 2 — Aggregating duplicate isolation years (`mode = "mean"`)
 
-In the `Lessler` dataset each participant (`id`) has titers against a panel
-of strains, and several strains share the same isolation year. Use
-`mode = "mean"` to aggregate titers with duplicate isolation years before
-computing distance-weighted metrics.
+When a participant has multiple titers against different strains that share
+the same isolation year, those titers need to be aggregated before computing
+distance-weighted metrics. Use the `mode` argument to control how duplicates
+are combined — `"mean"`, `"max"`, or `"min"`. About 64% of the
+(participant, sample_year, isolation_year) tuples in the Fonville cohort
+have more than one strain, so this is the realistic default workflow.
 
-```{r lessler-load}
-data(Lessler)
-head(Lessler[, c("id", "isolation_year", "strain", "titer")], 6)
-```
-
-```{r lessler-overall}
+```{r mode-mean-overall}
 result2 <- summarise_landscape(
-  Lessler,
-  part_col        = "id",
+  Fonville,
+  part_col        = "Subject Number",
   weight_col      = "isolation_year",
   val_col         = "titer",
-  var_trans       = TRUE,
+  group_col       = "Sample Year",
   mode            = "mean",
   required_metrics = c("GMT", "AUC", "gini_coefficient",
                        "Kurtosis", "Skewness", "Prop2", "Width2")
